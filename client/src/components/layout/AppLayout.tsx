@@ -1,18 +1,20 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, CheckSquare, Timer, BarChart2,
-  Sparkles, FileText, LogOut, Zap
+  Sparkles, FileText, LogOut, Zap, BookOpen, CreditCard
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { api } from '@/services/api';
 
 const navItems = [
-  { to: '/dashboard',  icon: LayoutDashboard, label: 'Dashboard'  },
-  { to: '/tasks',      icon: CheckSquare,     label: 'Tasks'       },
-  { to: '/timer',      icon: Timer,           label: 'Focus Timer' },
-  { to: '/ai-goals',   icon: Sparkles,        label: 'AI Goals'    },
-  { to: '/documents',  icon: FileText,        label: 'Documents'   },
-  { to: '/analytics',  icon: BarChart2,       label: 'Analytics'   },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard'    },
+  { to: '/tasks',     icon: CheckSquare,     label: 'Tasks'         },
+  { to: '/timer',     icon: Timer,           label: 'Focus Timer'   },
+  { to: '/ai-goals',  icon: Sparkles,        label: 'AI Goals'      },
+  { to: '/documents', icon: FileText,        label: 'Documents'     },
+  { to: '/analytics', icon: BarChart2,       label: 'Analytics'     },
+  { to: '/digest',    icon: BookOpen,        label: 'Weekly Digest' },
+  { to: '/billing',   icon: CreditCard,      label: 'Billing'       },
 ];
 
 export default function AppLayout() {
@@ -41,7 +43,7 @@ export default function AppLayout() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navItems.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}

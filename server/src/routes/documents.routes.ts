@@ -2,6 +2,8 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const pdfParse = require('pdf-parse') as (buf: Buffer) => Promise<{ text: string }>;
 import { protect, AuthRequest } from '../middleware/auth.middleware';
 import { prisma } from '../config/prisma';
 import { analyseDocument } from '../services/ai/claude.service';
@@ -52,9 +54,11 @@ router.post('/upload', upload.single('file'), async (req, res) => {
   const userId = (req as AuthRequest).userId!;
 
   try {
-    // Pass filename as a stub — for production you'd extract PDF text with pdf-parse
-    const fileContent = `[PDF document: ${file.originalname}]`;
-    const analysis = await analyseDocument(fileContent);
+    // Extract real text from PDF
+    const buffer      = fs.readFileSync(file.path);
+    const parsed      = await pdfParse(buffer);
+    const fileContent = parsed.text?.trim() || `[PDF: ${file.originalname} — no extractable text]`;
+    const analysis    = await analyseDocument(fileContent);
 
     const doc = await prisma.document.create({
       data: {

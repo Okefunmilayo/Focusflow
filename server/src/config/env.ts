@@ -21,6 +21,10 @@ export const env = {
 
   anthropicApiKey:    required('ANTHROPIC_API_KEY'),
 
+  stripeSecretKey:    process.env.STRIPE_SECRET_KEY ?? '',
+  stripeWebhookSecret:process.env.STRIPE_WEBHOOK_SECRET ?? '',
+  stripePriceIdPro:   process.env.STRIPE_PRICE_ID_PRO ?? '',
+
   sendgridApiKey:     process.env.SENDGRID_API_KEY ?? '',
   emailFrom:          process.env.EMAIL_FROM ?? 'noreply@focusflow.app',
 

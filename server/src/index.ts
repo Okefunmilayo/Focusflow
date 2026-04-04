@@ -14,6 +14,9 @@ import aiRoutes        from './routes/ai.routes';
 import pomodoroRoutes  from './routes/pomodoro.routes';
 import analyticsRoutes from './routes/analytics.routes';
 import documentsRoutes from './routes/documents.routes';
+import digestRoutes    from './routes/digest.routes';
+import billingRoutes   from './routes/billing.routes';
+import { runWeeklyDigestForAllUsers } from './services/digest.service';
 
 const app = express();
 
@@ -37,11 +40,14 @@ app.use('/api/v1/ai',        aiRoutes);
 app.use('/api/v1/pomodoro',  pomodoroRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/documents', documentsRoutes);
+app.use('/api/v1/digest',    digestRoutes);
+app.use('/api/v1/billing',   billingRoutes);
 
 // ── Weekly AI Digest Cron — Every Sunday at 8:00 PM ──────
 cron.schedule('0 20 * * 0', async () => {
   console.log('[CRON] Running weekly AI digest job...');
-  // Digest logic will be wired in Phase 7
+  await runWeeklyDigestForAllUsers();
+  console.log('[CRON] Weekly digest complete.');
 });
 
 // ── Error Handling ────────────────────────────────────────

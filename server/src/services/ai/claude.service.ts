@@ -81,11 +81,11 @@ ${content.slice(0, 150000)}`,
 
 // ── Weekly AI Digest ──────────────────────────────────────
 export interface DigestData {
-  tasksCompleted:  number;
-  tasksMissed:     number;
-  focusHours:      number;
-  topCategory:     string;
-  streakDays:      number;
+  tasksCompleted: number;
+  totalTasks:     number;
+  focusHours:     number;
+  topCategory?:   string;
+  pendingTasks:   string[];
 }
 
 export interface DigestResult {
@@ -94,25 +94,21 @@ export interface DigestResult {
   recommendations: string[];
 }
 
-export const generateWeeklyDigest = async (
-  userName: string,
-  data: DigestData
-): Promise<DigestResult> => {
+export const generateWeeklyDigest = async (data: DigestData): Promise<DigestResult> => {
   const message = await client.messages.create({
     model:      SONNET,
     max_tokens: 1024,
     messages: [{
       role: 'user',
-      content: `You are a personal productivity coach. Write a weekly review for ${userName}.
+      content: `You are a personal productivity coach. Write a weekly review based on this data.
 
 This week's stats:
-- Tasks completed: ${data.tasksCompleted}
-- Tasks missed: ${data.tasksMissed}
-- Focus hours: ${data.focusHours}
-- Most productive category: ${data.topCategory}
-- Current streak: ${data.streakDays} days
+- Tasks completed: ${data.tasksCompleted} / ${data.totalTasks}
+- Focus hours logged: ${data.focusHours}h
+- Most active category: ${data.topCategory ?? 'N/A'}
+- Pending tasks: ${data.pendingTasks.join(', ') || 'none'}
 
-Return ONLY valid JSON:
+Return ONLY valid JSON (no markdown):
 {
   "summary": "2-3 sentence personalised summary of their week",
   "improvements": ["improvement 1", "improvement 2", "improvement 3"],

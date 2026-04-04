@@ -10,6 +10,8 @@ import TimerPage      from '@/pages/TimerPage';
 import AnalyticsPage  from '@/pages/AnalyticsPage';
 import AIGoalsPage    from '@/pages/AIGoalsPage';
 import DocumentsPage  from '@/pages/DocumentsPage';
+import DigestPage     from '@/pages/DigestPage';
+import BillingPage    from '@/pages/BillingPage';
 
 // Layout
 import AppLayout from '@/components/layout/AppLayout';
@@ -40,6 +42,9 @@ export default function App() {
         <Route path="analytics"     element={<AnalyticsPage />} />
         <Route path="ai-goals"      element={<AIGoalsPage />} />
         <Route path="documents"     element={<DocumentsPage />} />
+        <Route path="digest"        element={<DigestPage />} />
+        <Route path="billing"       element={<BillingPage />} />
+        <Route path="billing/success" element={<BillingPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
