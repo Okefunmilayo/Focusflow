@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Users ────────────────────────────────────────────────
+model User {
+  id               String    @id @default(uuid())
+  name             String
+  email            String    @unique
+  password         String
+  avatar           String?
+  isEmailVerified  Boolean   @default(false)
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  tasks            Task[]
+  pomodoroSessions PomodoroSession[]
+  documents        Document[]
+  digests          WeeklyDigest[]
+  refreshTokens    RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+// ── Tasks ────────────────────────────────────────────────
+model Task {
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  status      TaskStatus  @default(TODO)
+  priority    Priority    @default(MEDIUM)
+  category    Category    @default(PERSONAL)
+  dueDate     DateTime?
+  isRecurring Boolean     @default(false)
+  recurrence  String?
+  aiGenerated Boolean     @default(false)
+  order       Int         @default(0)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId    String?
+  parent      Task?       @relation("SubTasks", fields: [parentId], references: [id])
+  subtasks    Task[]      @relation("SubTasks")
+  sessions    PomodoroSession[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Category {
+  WORK
+  STUDY
+  PERSONAL
+}
+
+// ── Pomodoro Sessions ────────────────────────────────────
+model PomodoroSession {
+  id        String   @id @default(uuid())
+  duration  Int      // minutes
+  type      String   @default("WORK") // WORK | SHORT_BREAK | LONG_BREAK
+  completed Boolean  @default(false)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@map("pomodoro_sessions")
+}
+
+// ── Documents & Flashcards ───────────────────────────────
+model Document {
+  id         String      @id @default(uuid())
+  filename   String
+  fileUrl    String
+  fileSize   Int
+  mimeType   String
+  summary    String?     @db.Text
+  keyPoints  String[]
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcards Flashcard[]
+  createdAt  DateTime    @default(now())
+
+  @@map("documents")
+}
+
+model Flashcard {
+  id         String   @id @default(uuid())
+  question   String   @db.Text
+  answer     String   @db.Text
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@map("flashcards")
+}
+
+// ── Weekly AI Digest ─────────────────────────────────────
+model WeeklyDigest {
+  id              String   @id @default(uuid())
+  weekStart       DateTime
+  weekEnd         DateTime
+  tasksCompleted  Int
+  focusHours      Float
+  topCategory     String?
+  aiSummary       String   @db.Text
+  improvements    String[]
+  recommendations String[]
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+
+  @@map("weekly_digests")
+}

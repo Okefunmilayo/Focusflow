@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment variables - NEVER commit these
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+server/.env
+client/.env
+
+# Build outputs
+dist/
+build/
+client/dist/
+server/dist/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# Prisma
+server/prisma/migrations/
+
+# Uploads (local only)
+server/uploads/
+
+# Coverage
+coverage/

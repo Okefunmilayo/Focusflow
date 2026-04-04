@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: focusflow_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: focusflow
+      POSTGRES_PASSWORD: focusflow_dev_password
+      POSTGRES_DB: focusflow_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Uncomment when ready to add Redis caching
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: focusflow_redis
+  #   ports:
+  #     - '6379:6379'
+
+volumes:
+  postgres_data:

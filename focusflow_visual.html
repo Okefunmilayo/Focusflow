@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FocusFlow — Project Plan</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --blue:    #3B82F6;
+  --cyan:    #06B6D4;
+  --green:   #10B981;
+  --amber:   #F59E0B;
+  --red:     #EF4444;
+  --purple:  #8B5CF6;
+  --pink:    #EC4899;
+  --dark:    #0F172A;
+  --dark2:   #1E293B;
+  --dark3:   #334155;
+  --mid:     #64748B;
+  --light:   #F1F5F9;
+  --white:   #FFFFFF;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #F8FAFC;
+  color: var(--dark2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ── COVER ── */
+.cover {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #0F172A 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -100px; left: -100px;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+}
+
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; right: -100px;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%);
+}
+
+.cover-logo {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 24px;
+  position: relative; z-index:1;
+}
+
+.cover-title {
+  font-size: 72px;
+  font-weight: 900;
+  color: white;
+  text-align: center;
+  line-height: 1.1;
+  position: relative; z-index:1;
+  background: linear-gradient(135deg, #fff 0%, #93C5FD 50%, #67E8F9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cover-sub {
+  font-size: 22px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  margin-top: 12px;
+  position: relative; z-index:1;
+}
+
+.cover-divider {
+  width: 80px; height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  border-radius: 2px;
+  margin: 32px auto;
+  position: relative; z-index:1;
+}
+
+.badge-row {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 12px;
+  position: relative; z-index:1;
+}
+
+.badge {
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.badge-blue   { background: rgba(59,130,246,0.2);  color: #93C5FD; border: 1px solid rgba(59,130,246,0.3); }
+.badge-cyan   { background: rgba(6,182,212,0.2);   color: #67E8F9; border: 1px solid rgba(6,182,212,0.3); }
+.badge-green  { background: rgba(16,185,129,0.2);  color: #6EE7B7; border: 1px solid rgba(16,185,129,0.3); }
+.badge-amber  { background: rgba(245,158,11,0.2);  color: #FCD34D; border: 1px solid rgba(245,158,11,0.3); }
+.badge-purple { background: rgba(139,92,246,0.2);  color: #C4B5FD; border: 1px solid rgba(139,92,246,0.3); }
+
+.cover-meta {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 700px;
+  position: relative; z-index:1;
+}
+
+.cover-stat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.cover-stat-num {
+  font-size: 32px;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+}
+
+.cover-stat-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cover-footer {
+  position: absolute;
+  bottom: 30px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 1px;
+  z-index: 1;
+}
+
+/* ── PAGE LAYOUT ── */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 40px;
+  page-break-after: always;
+}
+
+/* ── SECTION HEADERS ── */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.section-desc {
+  font-size: 14px;
+  color: var(--mid);
+  margin-bottom: 32px;
+  max-width: 600px;
+}
+
+.section-header {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--light);
+}
+
+/* ── CARDS ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.card-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  border: 1px solid #E2E8F0;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-accent {
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  border-radius: 12px 0 0 12px;
+}
+
+.card-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+
+.card-body {
+  font-size: 12.5px;
+  color: var(--mid);
+  line-height: 1.6;
+}
+
+/* ── FEATURE CARDS ── */
+.feature-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #E2E8F0;
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.feature-icon-box {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.feature-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.feature-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.feature-desc  { font-size: 12.5px; color: var(--mid); margin-bottom: 10px; }
+
+.bullet-list { list-style: none; }
+.bullet-list li {
+  font-size: 12px;
+  color: #475569;
+  padding: 3px 0;
+  padding-left: 14px;
+  position: relative;
+}
+.bullet-list li::before {
+  content: '›';
+  position: absolute; left: 0;
+  color: var(--blue); font-weight: 700;
+}
+
+/* ── TIMELINE ── */
+.timeline { position: relative; padding-left: 32px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px; top: 8px; bottom: 8px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--blue), var(--cyan), var(--green));
+  border-radius: 2px;
+}
+
+.timeline-item { position: relative; margin-bottom: 24px; }
+
+.timeline-dot {
+  position: absolute;
+  left: -28px; top: 4px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px currentColor;
+}
+
+.timeline-content {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 1px solid #E2E8F0;
+}
+
+.timeline-phase {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.timeline-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.timeline-week  { font-size: 11px; font-weight: 600; color: var(--mid); margin-bottom: 8px; }
+.timeline-items { font-size: 12px; color: var(--mid); }
+
+/* ── TECH STACK TABLE ── */
+.tech-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+
+.tech-table th {
+  background: var(--dark);
+  color: white;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.tech-table th:first-child { border-radius: 8px 0 0 0; }
+.tech-table th:last-child  { border-radius: 0 8px 0 0; }
+
+.tech-table td {
+  padding: 10px 14px;
+  font-size: 12.5px;
+  border-bottom: 1px solid #E2E8F0;
+  vertical-align: top;
+}
+
+.tech-table tr:nth-child(even) td { background: #F8FAFC; }
+.tech-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+.tech-table tr:last-child td:last-child  { border-radius: 0 0 8px 0; }
+
+.layer-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tech-name { font-weight: 600; color: var(--dark); font-family: 'JetBrains Mono', monospace; }
+
+/* ── REVENUE CARDS ── */
+.revenue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.plan-card {
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.plan-card.free   { background: #F8FAFC; border-color: #E2E8F0; }
+.plan-card.pro    { background: linear-gradient(135deg, #1E3A5F, #0F172A); border-color: var(--blue); }
+.plan-card.team   { background: linear-gradient(135deg, #2D1B69, #0F172A); border-color: var(--purple); }
+
+.plan-badge {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 8px; border-radius: 4px;
+  background: var(--amber); color: white;
+}
+
+.plan-name  { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+.plan-price { font-size: 40px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+.plan-period { font-size: 11px; color: var(--mid); margin-bottom: 16px; }
+.plan-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 14px 0; }
+.plan-feature { font-size: 12px; padding: 4px 0; }
+
+.plan-card.free .plan-name  { color: var(--mid); }
+.plan-card.free .plan-price { color: var(--dark); }
+.plan-card.free .plan-feature { color: #64748B; }
+
+.plan-card.pro .plan-name  { color: #93C5FD; }
+.plan-card.pro .plan-price { color: white; }
+.plan-card.pro .plan-feature { color: rgba(255,255,255,0.7); }
+
+.plan-card.team .plan-name  { color: #C4B5FD; }
+.plan-card.team .plan-price { color: white; }
+.plan-card.team .plan-feature { color: rgba(255,255,255,0.7); }
+
+/* ── EARNINGS FORECAST ── */
+.forecast-row {
+  display: flex; align-items: center;
+  background: white;
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  border: 1px solid #E2E8F0;
+  gap: 16px;
+}
+
+.forecast-label { font-size: 12.5px; font-weight: 600; min-width: 200px; }
+.forecast-bar-wrap { flex: 1; height: 10px; background: #E2E8F0; border-radius: 5px; overflow: hidden; }
+.forecast-bar { height: 100%; border-radius: 5px; }
+.forecast-val { font-size: 13px; font-weight: 700; min-width: 120px; text-align: right; }
+
+/* ── COMPARISON TABLE ── */
+.comp-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+.comp-table th {
+  background: var(--dark);
+  color: white;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.comp-table th:first-child { border-radius: 8px 0 0 0; }
+.comp-table th:last-child  { border-radius: 0 8px 0 0; }
+.comp-table td { padding: 11px 16px; font-size: 12.5px; border-bottom: 1px solid #E2E8F0; }
+.comp-table tr:nth-child(even) td { background: #F8FAFC; }
+.comp-table tr.winner td { background: linear-gradient(90deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02)); }
+.check { color: var(--green); font-weight: 700; }
+.cross { color: #CBD5E1; }
+.winner-name { font-weight: 700; color: var(--green); }
+
+/* ── RISK CARDS ── */
+.risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+.risk-card {
+  border-radius: 12px;
+  padding: 16px 18px;
+  border-left: 4px solid;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.risk-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.risk-title  { font-size: 13px; font-weight: 700; }
+.risk-pills  { display: flex; gap: 6px; }
+.risk-pill   { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+.risk-body   { font-size: 12px; color: var(--mid); }
+
+/* ── MARKET STATS ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 1px solid #E2E8F0;
+}
+.stat-number { font-size: 28px; font-weight: 900; line-height: 1.1; }
+.stat-label  { font-size: 11px; color: var(--mid); margin-top: 4px; }
+
+/* ── BENEFITS ── */
+.benefit-item {
+  display: flex; gap: 14px; align-items: flex-start;
+  margin-bottom: 14px;
+}
+.benefit-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.benefit-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.benefit-desc  { font-size: 12px; color: var(--mid); }
+
+/* ── CALLOUT BOX ── */
+.callout {
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 20px 0;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.callout-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.callout-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.callout-body  { font-size: 12.5px; }
+
+.callout-blue   { background: rgba(59,130,246,0.07);  border: 1px solid rgba(59,130,246,0.2);  }
+.callout-green  { background: rgba(16,185,129,0.07);  border: 1px solid rgba(16,185,129,0.2);  }
+.callout-amber  { background: rgba(245,158,11,0.07);  border: 1px solid rgba(245,158,11,0.2);  }
+.callout-purple { background: rgba(139,92,246,0.07);  border: 1px solid rgba(139,92,246,0.2);  }
+.callout-blue   .callout-title { color: var(--blue);   }
+.callout-green  .callout-title { color: var(--green);  }
+.callout-amber  .callout-title { color: var(--amber);  }
+.callout-purple .callout-title { color: var(--purple); }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #E2E8F0;
+}
+.page-header-brand {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--blue);
+}
+.page-header-section {
+  font-size: 11px; color: var(--mid);
+  font-weight: 500;
+}
+
+/* ── FOOTER ── */
+.page-footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid #E2E8F0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.page-footer-text { font-size: 10px; color: #CBD5E1; letter-spacing: 0.5px; }
+
+/* ── TWO COLUMN ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* ── COLOR HELPERS ── */
+.text-blue   { color: var(--blue);   }
+.text-cyan   { color: var(--cyan);   }
+.text-green  { color: var(--green);  }
+.text-amber  { color: var(--amber);  }
+.text-red    { color: var(--red);    }
+.text-purple { color: var(--purple); }
+.text-pink   { color: var(--pink);   }
+.text-white  { color: white; }
+.text-mid    { color: var(--mid);    }
+
+.bg-blue   { background: var(--blue);   }
+.bg-cyan   { background: var(--cyan);   }
+.bg-green  { background: var(--green);  }
+.bg-amber  { background: var(--amber);  }
+.bg-red    { background: var(--red);    }
+.bg-purple { background: var(--purple); }
+.bg-pink   { background: var(--pink);   }
+
+.bold { font-weight: 700; }
+
+/* ── PRINT ── */
+@media print {
+  body { background: white; }
+  .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page  { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* ── TOC ── */
+.toc-item {
+  display: flex; align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px dashed #E2E8F0;
+  gap: 10px;
+}
+.toc-num  { font-size: 11px; font-weight: 700; color: var(--blue); min-width: 24px; }
+.toc-name { font-size: 13px; font-weight: 500; flex: 1; }
+.toc-dots { flex: 1; border-bottom: 1px dotted #CBD5E1; margin: 0 8px; }
+
+/* ── LAUNCH STEPS ── */
+.launch-step {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: white; border-radius: 12px;
+  padding: 16px 18px; margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  border: 1px solid #E2E8F0;
+}
+.step-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: white;
+  flex-shrink: 0;
+}
+.step-content .step-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.step-content .step-desc  { font-size: 12px; color: var(--mid); }
+
+/* ── ROADMAP ── */
+.roadmap-row {
+  display: grid;
+  grid-template-columns: 100px 150px 1fr;
+  gap: 0;
+  margin-bottom: 10px;
+  align-items: stretch;
+}
+.roadmap-month {
+  background: var(--dark);
+  color: white;
+  padding: 12px 14px;
+  font-size: 11px; font-weight: 700;
+  border-radius: 10px 0 0 10px;
+  display: flex; align-items: center;
+}
+.roadmap-tag {
+  padding: 12px 14px;
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center;
+}
+.roadmap-desc {
+  background: white;
+  padding: 12px 16px;
+  font-size: 12px; color: var(--mid);
+  border-radius: 0 10px 10px 0;
+  border: 1px solid #E2E8F0;
+  border-left: none;
+  display: flex; align-items: center;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ COVER -->
+<div class="cover">
+  <div class="cover-logo">Founder's Blueprint 2026</div>
+  <div class="cover-title">FocusFlow</div>
+  <div class="cover-sub">AI-Powered Productivity &amp; Study Planner</div>
+  <div class="cover-divider"></div>
+  <div class="badge-row">
+    <span class="badge badge-blue">Full-Stack Web App</span>
+    <span class="badge badge-cyan">Claude API Powered</span>
+    <span class="badge badge-green">SaaS / Freemium</span>
+    <span class="badge badge-amber">Students + Corporate</span>
+    <span class="badge badge-purple">16-Week Build</span>
+  </div>
+  <div class="cover-meta">
+    <div class="cover-stat">
+      <div class="cover-stat-num" style="color:#93C5FD;">16</div>
+      <div class="cover-stat-label">Weeks to Launch</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-num" style="color:#6EE7B7;">7</div>
+      <div class="cover-stat-label">Core AI Features</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-num" style="color:#FCD34D;">£7.99</div>
+      <div class="cover-stat-label">Pro / Month</div>
+    </div>
+  </div>
+  <div class="cover-footer">CONFIDENTIAL &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; All Rights Reserved</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TABLE OF CONTENTS -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">Table of Contents</span>
+  </div>
+
+  <div style="margin-bottom:32px;">
+    <div class="section-label text-blue">Navigate the Plan</div>
+    <div class="section-title">What's Inside</div>
+    <div class="section-desc">A complete founder's blueprint — from problem to profit.</div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="toc-item"><span class="toc-num">01</span><span class="toc-name">Executive Summary</span></div>
+      <div class="toc-item"><span class="toc-num">02</span><span class="toc-name">Problem Statement</span></div>
+      <div class="toc-item"><span class="toc-num">03</span><span class="toc-name">Solution Overview</span></div>
+      <div class="toc-item"><span class="toc-num">04</span><span class="toc-name">Target Users &amp; Market</span></div>
+      <div class="toc-item"><span class="toc-num">05</span><span class="toc-name">Core Features (Detailed)</span></div>
+      <div class="toc-item"><span class="toc-num">06</span><span class="toc-name">Technology Stack</span></div>
+      <div class="toc-item"><span class="toc-num">07</span><span class="toc-name">System Architecture</span></div>
+      <div class="toc-item"><span class="toc-num">08</span><span class="toc-name">Web App vs Native App</span></div>
+      <div class="toc-item"><span class="toc-num">09</span><span class="toc-name">How Users Access FocusFlow</span></div>
+      <div class="toc-item"><span class="toc-num">10</span><span class="toc-name">Everything You Need</span></div>
+    </div>
+    <div>
+      <div class="toc-item"><span class="toc-num">11</span><span class="toc-name">16-Week Execution Plan</span></div>
+      <div class="toc-item"><span class="toc-num">12</span><span class="toc-name">Revenue Model &amp; Pricing</span></div>
+      <div class="toc-item"><span class="toc-num">13</span><span class="toc-name">Founder Earnings Forecast</span></div>
+      <div class="toc-item"><span class="toc-num">14</span><span class="toc-name">Benefits to Students</span></div>
+      <div class="toc-item"><span class="toc-num">15</span><span class="toc-name">Benefits to Corporate Workers</span></div>
+      <div class="toc-item"><span class="toc-num">16</span><span class="toc-name">Societal Benefits</span></div>
+      <div class="toc-item"><span class="toc-num">17</span><span class="toc-name">Competitive Landscape</span></div>
+      <div class="toc-item"><span class="toc-num">18</span><span class="toc-name">Risk Analysis</span></div>
+      <div class="toc-item"><span class="toc-num">19</span><span class="toc-name">Launch Strategy</span></div>
+      <div class="toc-item"><span class="toc-num">20</span><span class="toc-name">12-Month Roadmap &amp; CTA</span></div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">focusflow.app</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 01 EXEC SUMMARY -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">01 · Executive Summary</span>
+  </div>
+
+  <div class="section-label text-blue">Section 01</div>
+  <div class="section-title">Executive Summary</div>
+  <div class="section-desc">The 60-second pitch for FocusFlow.</div>
+
+  <div class="callout callout-blue">
+    <span class="callout-icon">💡</span>
+    <div>
+      <div class="callout-title">What is FocusFlow?</div>
+      <div class="callout-body">FocusFlow is a category-defining AI productivity web app that combines task management, AI goal planning, document intelligence, focus tracking, and weekly coaching into a single seamless experience — built for students and corporate professionals.</div>
+    </div>
+  </div>
+
+  <div class="card-grid-3" style="margin-top:20px;">
+    <div class="card">
+      <div class="card-accent bg-blue"></div>
+      <div style="padding-left:10px;">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">The Problem</div>
+        <div class="card-body">People have goals but no intelligent system to break them down, track progress, and adapt in real-time.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-accent bg-green"></div>
+      <div style="padding-left:10px;">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">The Solution</div>
+        <div class="card-body">An all-in-one AI planner that turns big ambitions into daily actions, keeps users focused, and coaches them weekly.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-accent bg-amber"></div>
+      <div style="padding-left:10px;">
+        <span class="card-icon">💰</span>
+        <div class="card-title">The Opportunity</div>
+        <div class="card-body">$102B productivity app market. No single product combines AI coaching + study tools + focus timer today.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--dark); border-radius:16px; padding:24px; margin-top:8px;">
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:20px;">
+      <div style="text-align:center;">
+        <div style="font-size:24px; font-weight:900; color:#93C5FD;">16 Wks</div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:4px; text-transform:uppercase; letter-spacing:1px;">Build Timeline</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:24px; font-weight:900; color:#6EE7B7;">£7.99</div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:4px; text-transform:uppercase; letter-spacing:1px;">Pro Monthly</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:24px; font-weight:900; color:#FCD34D;">~$20/mo</div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:4px; text-transform:uppercase; letter-spacing:1px;">Dev Running Cost</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:24px; font-weight:900; color:#F9A8D4;">Aug 2026</div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:4px; text-transform:uppercase; letter-spacing:1px;">Target Launch</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Section 01 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 02-03 PROBLEM + SOLUTION -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">02–03 · Problem &amp; Solution</span>
+  </div>
+
+  <div class="section-label text-red">Section 02</div>
+  <div class="section-title">The Problem</div>
+  <div class="section-desc">Why existing tools fail students and professionals.</div>
+
+  <div class="two-col" style="margin-bottom:28px;">
+    <div>
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--blue); margin-bottom:12px;">For Students</div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(239,68,68,0.1); color:var(--red);">😰</div>
+        <div><div class="benefit-title">Goal Paralysis</div><div class="benefit-desc">No system to convert "pass my finals" into today's actions.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(239,68,68,0.1); color:var(--red);">📚</div>
+        <div><div class="benefit-title">Document Overload</div><div class="benefit-desc">200-page textbooks with no efficient way to extract key info.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(239,68,68,0.1); color:var(--red);">📉</div>
+        <div><div class="benefit-title">No Progress Insight</div><div class="benefit-desc">Zero visibility into actual study hours and consistency.</div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--purple); margin-bottom:12px;">For Corporate Workers</div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">🏔️</div>
+        <div><div class="benefit-title">Vague OKRs</div><div class="benefit-desc">Quarterly targets never translate into concrete daily work.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">🔀</div>
+        <div><div class="benefit-title">Too Many Tools</div><div class="benefit-desc">Notion + Todoist + Toggl + Slack — no single source of truth.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">📬</div>
+        <div><div class="benefit-title">No AI Coaching</div><div class="benefit-desc">No weekly retrospective to course-correct before it's too late.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:1px; background:#E2E8F0; margin:28px 0;"></div>
+
+  <div class="section-label text-green">Section 03</div>
+  <div class="section-title">The Solution</div>
+  <div class="section-desc">One app that replaces five — powered by AI.</div>
+
+  <div class="callout callout-green">
+    <span class="callout-icon">🚀</span>
+    <div>
+      <div class="callout-title">FocusFlow's Unique Positioning</div>
+      <div class="callout-body">No competitor combines AI goal breakdown + document summarisation + Pomodoro focus tracking + weekly AI coaching in a single product. That gap is FocusFlow's moat.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Sections 02–03 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 04 MARKET -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">04 · Target Users &amp; Market</span>
+  </div>
+
+  <div class="section-label text-amber">Section 04</div>
+  <div class="section-title">Target Users &amp; Market Opportunity</div>
+  <div class="section-desc">Two massive segments. One unified product.</div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-number text-blue">220M</div>
+      <div class="stat-label">University students worldwide</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number text-purple">1.3B</div>
+      <div class="stat-label">Knowledge workers globally</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number text-amber">$102B</div>
+      <div class="stat-label">Productivity app market 2024</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number text-green">13%</div>
+      <div class="stat-label">Annual market growth (CAGR)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number text-cyan">$24B</div>
+      <div class="stat-label">AI productivity segment by 2026</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number text-pink">5–10%</div>
+      <div class="stat-label">Realistic free → paid conversion</div>
+    </div>
+  </div>
+
+  <div class="section-label text-blue" style="margin-top:8px;">User Personas</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-accent bg-blue"></div>
+      <div style="padding-left:10px;">
+        <div style="font-size:28px; margin-bottom:8px;">🎓</div>
+        <div class="card-title">Alex, 20 — CS Student</div>
+        <div class="card-body">Juggling 3 projects and upcoming exams. Needs AI to break down his dissertation into daily writing goals and track study hours per subject.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-accent bg-purple"></div>
+      <div style="padding-left:10px;">
+        <div style="font-size:28px; margin-bottom:8px;">💼</div>
+        <div class="card-title">Priya, 28 — Marketing Manager</div>
+        <div class="card-body">Remote worker managing Q2 campaigns. Wants AI to translate OKRs into weekly tasks and get a Sunday digest to stay on track.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-accent bg-green"></div>
+      <div style="padding-left:10px;">
+        <div style="font-size:28px; margin-bottom:8px;">📖</div>
+        <div class="card-title">James, 17 — A-Level Student</div>
+        <div class="card-body">Preparing for university entrance exams. Needs structured revision timetables and a PDF summariser to condense thick textbooks fast.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-accent bg-amber"></div>
+      <div style="padding-left:10px;">
+        <div style="font-size:28px; margin-bottom:8px;">🧑‍💻</div>
+        <div class="card-title">Sandra, 35 — Freelance Consultant</div>
+        <div class="card-body">Manages 4 clients simultaneously. Needs one hub for all task streams, billable hours tracking, and an AI review to protect her margin.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Section 04 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 05 FEATURES -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">05 · Core Features</span>
+  </div>
+
+  <div class="section-label text-blue">Section 05</div>
+  <div class="section-title">Core Features — Detailed Specification</div>
+  <div class="section-desc">Seven AI-powered modules. One seamless experience.</div>
+
+  <div class="feature-card">
+    <div class="feature-icon-box" style="background:rgba(59,130,246,0.1);">🔐</div>
+    <div>
+      <span class="feature-tag" style="background:rgba(59,130,246,0.1); color:var(--blue);">Auth</span>
+      <div class="feature-title">User Authentication</div>
+      <div class="feature-desc">Secure JWT-based register/login/logout with bcrypt hashing, refresh tokens, password reset via email, and optional Google OAuth 2.0.</div>
+      <ul class="bullet-list">
+        <li>JWT access token (15 min) + refresh token (7 days)</li>
+        <li>httpOnly cookie storage — XSS protected</li>
+        <li>Google OAuth sign-in for frictionless onboarding</li>
+        <li>SendGrid password reset emails</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon-box" style="background:rgba(6,182,212,0.1);">✅</div>
+    <div>
+      <span class="feature-tag" style="background:rgba(6,182,212,0.1); color:var(--cyan);">Tasks</span>
+      <div class="feature-title">Task Manager</div>
+      <div class="feature-desc">Full CRUD tasks with priorities, categories, due dates, sub-tasks, recurring tasks, and a drag-and-drop Kanban board.</div>
+      <ul class="bullet-list">
+        <li>Kanban board (To-Do / In-Progress / Done)</li>
+        <li>Priority tags: High · Medium · Low</li>
+        <li>Category filters: Work · Study · Personal</li>
+        <li>Bulk actions, sub-tasks, recurring tasks</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon-box" style="background:rgba(16,185,129,0.1);">🤖</div>
+    <div>
+      <span class="feature-tag" style="background:rgba(16,185,129,0.1); color:var(--green);">AI</span>
+      <div class="feature-title">AI Goal Breakdown</div>
+      <div class="feature-desc">Type any big goal — AI returns phase overview, weekly milestones, and daily action steps, automatically saved as tasks.</div>
+      <ul class="bullet-list">
+        <li>Claude Sonnet 4.6 with chain-of-thought prompt engineering</li>
+        <li>Accepts deadline + context for personalisation</li>
+        <li>One-click: accept, edit, or regenerate any step</li>
+        <li>Rate-limited per tier (3/month free · unlimited Pro)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon-box" style="background:rgba(245,158,11,0.1);">📄</div>
+    <div>
+      <span class="feature-tag" style="background:rgba(245,158,11,0.1); color:var(--amber);">AI</span>
+      <div class="feature-title">Document Summariser &amp; Flashcard Generator</div>
+      <div class="feature-desc">Upload PDF or paste text. AI returns executive summary, key bullets, and Q&amp;A flashcards — with study mode and Anki export.</div>
+      <ul class="bullet-list">
+        <li>LangChain PDF loader + text splitter</li>
+        <li>300-word summary + 5–10 key points + flashcards</li>
+        <li>Flip-card study mode built in</li>
+        <li>Export to PDF summary or Anki deck (.apkg)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon-box" style="background:rgba(239,68,68,0.1);">⏱️</div>
+    <div>
+      <span class="feature-tag" style="background:rgba(239,68,68,0.1); color:var(--red);">Focus</span>
+      <div class="feature-title">Pomodoro Focus Timer</div>
+      <div class="feature-desc">Evidence-backed 25/5 focus cycles with automatic session logging, productivity streaks, and desktop notifications.</div>
+      <ul class="bullet-list">
+        <li>Link each session to a specific task</li>
+        <li>Streak counter — consecutive days with ≥1 Pomodoro</li>
+        <li>Customisable intervals (Pro feature)</li>
+        <li>All sessions feed into the Analytics Dashboard</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon-box" style="background:rgba(139,92,246,0.1);">📊</div>
+    <div>
+      <span class="feature-tag" style="background:rgba(139,92,246,0.1); color:var(--purple);">Analytics</span>
+      <div class="feature-title">Analytics Dashboard + Weekly AI Digest</div>
+      <div class="feature-desc">Interactive charts showing productivity trends. Every Sunday, AI generates a personalised coaching report with 3 specific improvements for next week.</div>
+      <ul class="bullet-list">
+        <li>GitHub-style focus hours heatmap</li>
+        <li>Category distribution pie chart</li>
+        <li>Weekly completion bar chart</li>
+        <li>AI Digest: delivered in-app + email every Sunday</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Section 05 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 06 TECH STACK -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">06 · Technology Stack</span>
+  </div>
+
+  <div class="section-label text-cyan">Section 06</div>
+  <div class="section-title">Technology Stack</div>
+  <div class="section-desc">Production-grade tools chosen for speed, scalability, and developer experience.</div>
+
+  <table class="tech-table">
+    <thead>
+      <tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="layer-badge" style="background:rgba(59,130,246,0.15);color:var(--blue);">Frontend</span></td><td><span class="tech-name">React 18 + TypeScript</span></td><td>Component UI with strict typing and hooks</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(59,130,246,0.15);color:var(--blue);">Frontend</span></td><td><span class="tech-name">Tailwind CSS + shadcn/ui</span></td><td>Rapid, consistent, accessible styling system</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(59,130,246,0.15);color:var(--blue);">Frontend</span></td><td><span class="tech-name">Zustand + React Query</span></td><td>Global state + server state caching</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(59,130,246,0.15);color:var(--blue);">Frontend</span></td><td><span class="tech-name">Recharts</span></td><td>Analytics charts and data visualisation</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(16,185,129,0.15);color:var(--green);">Backend</span></td><td><span class="tech-name">Node.js + Express.js</span></td><td>Stateless REST API with versioned routes</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(16,185,129,0.15);color:var(--green);">Backend</span></td><td><span class="tech-name">JWT + bcrypt</span></td><td>Authentication and password security</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(16,185,129,0.15);color:var(--green);">Backend</span></td><td><span class="tech-name">Multer + node-cron</span></td><td>File uploads + scheduled jobs (Weekly Digest)</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(245,158,11,0.15);color:var(--amber);">Database</span></td><td><span class="tech-name">PostgreSQL + Prisma ORM</span></td><td>Relational DB with type-safe queries</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(245,158,11,0.15);color:var(--amber);">Database</span></td><td><span class="tech-name">Supabase (managed)</span></td><td>Free-tier hosted PostgreSQL</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(139,92,246,0.15);color:var(--purple);">AI Layer</span></td><td><span class="tech-name">Anthropic Claude API</span></td><td>Goal breakdown, summarisation, weekly digest (Sonnet 4.6 + Haiku 4.5)</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(139,92,246,0.15);color:var(--purple);">AI Layer</span></td><td><span class="tech-name">LangChain.js</span></td><td>Document loading, chunking, LLM chains</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(239,68,68,0.15);color:var(--red);">Infra</span></td><td><span class="tech-name">Docker + Render</span></td><td>Containerised local dev + free-tier production</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(239,68,68,0.15);color:var(--red);">Infra</span></td><td><span class="tech-name">Cloudinary / AWS S3</span></td><td>PDF and file storage with signed URLs</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(239,68,68,0.15);color:var(--red);">Infra</span></td><td><span class="tech-name">GitHub Actions</span></td><td>CI/CD: test → build → deploy pipeline</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(6,182,212,0.15);color:var(--cyan);">Testing</span></td><td><span class="tech-name">Jest + Supertest</span></td><td>Backend unit and integration tests</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(6,182,212,0.15);color:var(--cyan);">Testing</span></td><td><span class="tech-name">Vitest + RTL</span></td><td>Frontend component tests</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(236,72,153,0.15);color:var(--pink);">Billing</span></td><td><span class="tech-name">Stripe</span></td><td>Pro subscriptions + team plan billing</td></tr>
+      <tr><td><span class="layer-badge" style="background:rgba(236,72,153,0.15);color:var(--pink);">Email</span></td><td><span class="tech-name">SendGrid</span></td><td>Transactional emails + weekly digest delivery</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-purple">
+    <span class="callout-icon">🏗️</span>
+    <div>
+      <div class="callout-title">Architecture: 3-Tier Design</div>
+      <div class="callout-body"><strong>Client (React PWA)</strong> → <strong>API Server (Express on Render)</strong> → <strong>PostgreSQL (Supabase) + Claude API + S3</strong>. All layers are independently deployable and horizontally scalable.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:16px;">
+    <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--purple); margin-bottom:12px;">Claude API Model Routing Strategy</div>
+    <table class="tech-table">
+      <thead><tr><th>Feature</th><th>Model</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>AI Goal Breakdown</td><td><span class="tech-name">claude-sonnet-4-6</span></td><td>Deep reasoning + strict structured JSON output</td></tr>
+        <tr><td>Document Summariser</td><td><span class="tech-name">claude-sonnet-4-6</span></td><td>200K token context — handles full textbooks without chunking</td></tr>
+        <tr><td>Flashcard Generation</td><td><span class="tech-name">claude-haiku-4-5</span></td><td>Fast &amp; cheap — simple Q&amp;A format, high volume</td></tr>
+        <tr><td>Weekly AI Digest</td><td><span class="tech-name">claude-sonnet-4-6</span></td><td>Personalised coaching quality matters here</td></tr>
+        <tr><td>Task suggestions / tips</td><td><span class="tech-name">claude-haiku-4-5</span></td><td>Low complexity, keeps API costs minimal</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Section 06 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 07-09 ARCH + ACCESS + WEB vs NATIVE -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">07–09 · Architecture · Access · Platform Decision</span>
+  </div>
+
+  <div class="section-label text-cyan">Section 07</div>
+  <div class="section-title">System Architecture</div>
+
+  <!-- Architecture Diagram (CSS-based) -->
+  <div style="background:var(--dark); border-radius:16px; padding:24px; margin-bottom:24px; font-family:'JetBrains Mono',monospace;">
+    <div style="display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:0; align-items:center;">
+      <div style="background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.4); border-radius:12px; padding:16px; text-align:center;">
+        <div style="font-size:22px; margin-bottom:8px;">🖥️</div>
+        <div style="font-size:11px; font-weight:700; color:#93C5FD; text-transform:uppercase; letter-spacing:1px;">Client</div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-top:4px;">React PWA<br/>Tailwind · Recharts</div>
+      </div>
+      <div style="text-align:center; padding:0 8px;">
+        <div style="font-size:18px; color:rgba(255,255,255,0.3);">⟷</div>
+        <div style="font-size:9px; color:rgba(255,255,255,0.3);">HTTPS / REST</div>
+      </div>
+      <div style="background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); border-radius:12px; padding:16px; text-align:center;">
+        <div style="font-size:22px; margin-bottom:8px;">⚙️</div>
+        <div style="font-size:11px; font-weight:700; color:#6EE7B7; text-transform:uppercase; letter-spacing:1px;">API Server</div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-top:4px;">Express.js<br/>JWT · Multer · Cron</div>
+      </div>
+      <div style="text-align:center; padding:0 8px;">
+        <div style="font-size:18px; color:rgba(255,255,255,0.3);">⟷</div>
+        <div style="font-size:9px; color:rgba(255,255,255,0.3);">Prisma / API</div>
+      </div>
+      <div style="background:rgba(245,158,11,0.2); border:1px solid rgba(245,158,11,0.4); border-radius:12px; padding:16px; text-align:center;">
+        <div style="font-size:22px; margin-bottom:8px;">🗄️</div>
+        <div style="font-size:11px; font-weight:700; color:#FCD34D; text-transform:uppercase; letter-spacing:1px;">Data + AI</div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-top:4px;">PostgreSQL · Claude API<br/>S3 · SendGrid</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:1px; background:#E2E8F0; margin:24px 0;"></div>
+
+  <div class="section-label text-green">Section 08–09</div>
+  <div class="section-title">Platform &amp; Access Decision</div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div>
+      <div style="font-size:13px; font-weight:700; margin-bottom:12px; color:var(--green);">✅ Build as PWA Web App (MVP)</div>
+      <ul class="bullet-list">
+        <li>Works on every device — no install required</li>
+        <li>No App Store approval delays</li>
+        <li>Installable to home screen like a native app</li>
+        <li>Google-indexable for organic SEO</li>
+        <li>One codebase — faster to ship</li>
+        <li>Near-zero distribution cost</li>
+      </ul>
+    </div>
+    <div>
+      <div style="font-size:13px; font-weight:700; margin-bottom:12px; color:var(--mid);">📱 React Native App (Post-MVP)</div>
+      <ul class="bullet-list" style="opacity:0.6;">
+        <li>Once 1,000+ active web users</li>
+        <li>Reuse same Express API layer</li>
+        <li>iOS App Store + Google Play presence</li>
+        <li>Better offline &amp; native hardware access</li>
+        <li>Estimated: Month 11 of roadmap</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-label text-blue" style="margin-top:4px;">How Users Access FocusFlow</div>
+  <div class="card-grid-3" style="margin-top:12px;">
+    <div class="card" style="text-align:center;">
+      <span class="card-icon" style="font-size:32px;">🌐</span>
+      <div class="card-title">Browser</div>
+      <div class="card-body">Visit focusflow.app in any browser. Full functionality, zero install.</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <span class="card-icon" style="font-size:32px;">📲</span>
+      <div class="card-title">Installed PWA</div>
+      <div class="card-body">Add to home screen on iOS/Android or desktop Chrome. Launches standalone.</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <span class="card-icon" style="font-size:32px;">📧</span>
+      <div class="card-title">Email Digest</div>
+      <div class="card-body">Weekly AI coaching report delivered to your inbox every Sunday.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Sections 07–09 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 10 WHAT YOU NEED -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">10 · Everything You Need</span>
+  </div>
+
+  <div class="section-label text-amber">Section 10</div>
+  <div class="section-title">Everything You Need to Build FocusFlow</div>
+  <div class="section-desc">Skills, tools, accounts, and costs — all in one place.</div>
+
+  <div class="two-col">
+    <div>
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--blue); margin-bottom:12px;">Skills Required</div>
+      <div class="launch-step">
+        <div class="step-num bg-blue">1</div>
+        <div class="step-content"><div class="step-title">JavaScript / TypeScript</div><div class="step-desc">Intermediate to advanced level</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-cyan">2</div>
+        <div class="step-content"><div class="step-title">React + Node.js + Express</div><div class="step-desc">Full-stack fundamentals</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-green">3</div>
+        <div class="step-content"><div class="step-title">SQL + ORM (Prisma)</div><div class="step-desc">Basic database design</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-purple">4</div>
+        <div class="step-content"><div class="step-title">Prompt Engineering</div><div class="step-desc">Learn as you build — documented in this plan</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-amber">5</div>
+        <div class="step-content"><div class="step-title">Git + CLI Basics</div><div class="step-desc">Version control and terminal usage</div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--green); margin-bottom:12px;">Tools You Already Have ✓</div>
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-accent bg-green"></div>
+        <div style="padding-left:10px;">
+          <ul class="bullet-list">
+            <li>VS Code ✓</li>
+            <li>Docker Desktop ✓</li>
+            <li>Postman ✓</li>
+            <li>Windows 11 ✓</li>
+            <li>Python 3.14 ✓</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--amber); margin-bottom:12px;">Monthly Cost Breakdown</div>
+      <div style="background:white; border-radius:12px; padding:16px; border:1px solid #E2E8F0; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #F1F5F9; font-size:12px;"><span>Render (hosting)</span><span class="text-green bold">£0</span></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #F1F5F9; font-size:12px;"><span>Supabase (PostgreSQL)</span><span class="text-green bold">£0</span></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #F1F5F9; font-size:12px;"><span>SendGrid (email)</span><span class="text-green bold">£0</span></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #F1F5F9; font-size:12px;"><span>Cloudinary (storage)</span><span class="text-green bold">£0</span></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #F1F5F9; font-size:12px;"><span>Anthropic Claude API (dev usage)</span><span class="text-amber bold">~£15</span></div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0 0; font-size:13px; font-weight:700;"><span>TOTAL</span><span class="text-green">~£15/month</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Section 10 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 11 EXECUTION PLAN -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">11 · 16-Week Execution Plan</span>
+  </div>
+
+  <div class="section-label text-green">Section 11</div>
+  <div class="section-title">16-Week Step-by-Step Execution Plan</div>
+  <div class="section-desc">8 clear phases. One feature shipped per phase.</div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot" style="color:var(--blue); background:var(--blue);"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase text-blue">Phase 1</div>
+        <div class="timeline-title">Foundation &amp; Project Setup</div>
+        <div class="timeline-week">Weeks 1–2</div>
+        <div class="timeline-items">Monorepo structure · ESLint + Prettier + TypeScript · PostgreSQL + Prisma schema · Docker Compose · GitHub repo + CI skeleton</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="color:var(--cyan); background:var(--cyan);"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase text-cyan">Phase 2</div>
+        <div class="timeline-title">Authentication System</div>
+        <div class="timeline-week">Weeks 3–4</div>
+        <div class="timeline-items">Register / Login / Logout API · JWT + refresh tokens · Password reset flow · React auth screens · Protected route HOC</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="color:var(--green); background:var(--green);"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase text-green">Phase 3</div>
+        <div class="timeline-title">Task Manager</div>
+        <div class="timeline-week">Weeks 5–6</div>
+        <div class="timeline-items">Full CRUD API · Kanban drag-and-drop board · List view with filters · Sub-tasks + recurring tasks · Integration tests</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="color:var(--amber); background:var(--amber);"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase text-amber">Phase 4</div>
+        <div class="timeline-title">AI Goal Breakdown</div>
+        <div class="timeline-week">Weeks 7–8</div>
+        <div class="timeline-items">Anthropic Claude API integration · Prompt engineering module · Goal input form · AI response → task creation · Rate limiting per tier</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="color:var(--red); background:var(--red);"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase text-red">Phase 5</div>
+        <div class="timeline-title">Document Summariser</div>
+        <div class="timeline-week">Weeks 9–10</div>
+        <div class="timeline-items">Multer file upload endpoint · LangChain PDF loader · Summary + flashcard prompts · Study mode UI · PDF/Anki export</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="color:var(--purple); background:var(--purple);"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase text-purple">Phase 6</div>
+        <div class="timeline-title">Pomodoro Timer + Analytics Dashboard</div>
+        <div class="timeline-week">Weeks 11–12</div>
+        <div class="timeline-items">Timer component · Session logging API · Streak logic · Analytics aggregation endpoints · Recharts dashboard</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="color:var(--pink); background:var(--pink);"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase text-pink">Phase 7</div>
+        <div class="timeline-title">Weekly AI Digest</div>
+        <div class="timeline-week">Weeks 13–14</div>
+        <div class="timeline-items">node-cron Sunday job · Digest data query + AI prompt · SendGrid email template · In-app notification badge · Digest history page</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="color:var(--green); background:var(--green);"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase text-green">Phase 8</div>
+        <div class="timeline-title">Polish, Testing &amp; Launch</div>
+        <div class="timeline-week">Weeks 15–16</div>
+        <div class="timeline-items">Full test coverage (Jest + Vitest) · Code splitting + performance · Render production deploy · Stripe billing · Product Hunt launch</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Section 11 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 12-13 REVENUE -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">12–13 · Revenue &amp; Founder Earnings</span>
+  </div>
+
+  <div class="section-label text-amber">Section 12</div>
+  <div class="section-title">Revenue Model &amp; Pricing</div>
+  <div class="section-desc">Freemium entry, Pro conversion, institutional licensing.</div>
+
+  <div class="revenue-grid" style="margin-bottom:28px;">
+    <div class="plan-card free">
+      <div class="plan-name">Free</div>
+      <div class="plan-price" style="color:var(--dark);">£0</div>
+      <div class="plan-period">forever</div>
+      <div style="height:1px; background:#E2E8F0; margin:12px 0;"></div>
+      <div class="plan-feature">5 active tasks</div>
+      <div class="plan-feature">1 AI goal breakdown/month</div>
+      <div class="plan-feature">3 Pomodoros/day</div>
+      <div class="plan-feature">Basic analytics</div>
+    </div>
+    <div class="plan-card pro">
+      <span class="plan-badge">POPULAR</span>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">£7.99</div>
+      <div class="plan-period" style="color:rgba(255,255,255,0.4);">per month</div>
+      <div style="height:1px; background:rgba(255,255,255,0.1); margin:12px 0;"></div>
+      <div class="plan-feature">Unlimited tasks &amp; AI</div>
+      <div class="plan-feature">Document summariser</div>
+      <div class="plan-feature">Weekly AI Digest</div>
+      <div class="plan-feature">Full analytics + streaks</div>
+    </div>
+    <div class="plan-card team">
+      <div class="plan-name">Team</div>
+      <div class="plan-price">£19.99</div>
+      <div class="plan-period" style="color:rgba(255,255,255,0.4);">per user/month</div>
+      <div style="height:1px; background:rgba(255,255,255,0.1); margin:12px 0;"></div>
+      <div class="plan-feature">All Pro features</div>
+      <div class="plan-feature">Shared workspaces</div>
+      <div class="plan-feature">Manager dashboard</div>
+      <div class="plan-feature">Priority support</div>
+    </div>
+  </div>
+
+  <div class="section-label text-green">Section 13</div>
+  <div class="section-title">Founder Earnings Forecast</div>
+  <div class="section-desc">Conservative projections based on 5% free→paid conversion.</div>
+
+  <div class="forecast-row">
+    <span class="forecast-label">Months 1–3 · Beta (0 paid)</span>
+    <div class="forecast-bar-wrap"><div class="forecast-bar bg-blue" style="width:2%;"></div></div>
+    <span class="forecast-val text-mid">£0 / month</span>
+  </div>
+  <div class="forecast-row">
+    <span class="forecast-label">Month 4–5 · 100 Pro users</span>
+    <div class="forecast-bar-wrap"><div class="forecast-bar bg-cyan" style="width:8%;"></div></div>
+    <span class="forecast-val text-cyan">~£799 / month</span>
+  </div>
+  <div class="forecast-row">
+    <span class="forecast-label">Month 6–8 · 500 Pro users</span>
+    <div class="forecast-bar-wrap"><div class="forecast-bar bg-green" style="width:30%;"></div></div>
+    <span class="forecast-val text-green">~£3,995 / month</span>
+  </div>
+  <div class="forecast-row">
+    <span class="forecast-label">Month 9–12 · 1,500 Pro users</span>
+    <div class="forecast-bar-wrap"><div class="forecast-bar bg-amber" style="width:65%;"></div></div>
+    <span class="forecast-val text-amber">~£11,985 / month</span>
+  </div>
+  <div class="forecast-row">
+    <span class="forecast-label">Year 2 · 5,000 Pro + Teams</span>
+    <div class="forecast-bar-wrap"><div class="forecast-bar" style="width:100%; background:linear-gradient(90deg,var(--blue),var(--green));"></div></div>
+    <span class="forecast-val text-green bold">~£23,000+ / month</span>
+  </div>
+
+  <div class="callout callout-amber" style="margin-top:20px;">
+    <span class="callout-icon">💡</span>
+    <div>
+      <div class="callout-title">Additional Revenue Streams</div>
+      <div class="callout-body">University licensing (£500–£2,000/yr per institution) · Corporate white-label partnerships · Affiliate/referral commission on Pro upgrades</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Sections 12–13 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 14-16 BENEFITS -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">14–16 · Benefits</span>
+  </div>
+
+  <div class="section-label text-blue">Section 14</div>
+  <div class="section-title">Benefits to Students</div>
+
+  <div class="two-col" style="margin-bottom:28px;">
+    <div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(59,130,246,0.1); color:var(--blue);">🗂️</div>
+        <div><div class="benefit-title">Instant Study Plans</div><div class="benefit-desc">Type a goal, get a day-by-day revision plan in seconds. No more staring at a blank calendar.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(6,182,212,0.1); color:var(--cyan);">📄</div>
+        <div><div class="benefit-title">200-Page PDFs in 60 Seconds</div><div class="benefit-desc">The summariser turns any textbook into a concise summary + flashcards instantly.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(16,185,129,0.1); color:var(--green);">🏆</div>
+        <div><div class="benefit-title">Gamified Consistency</div><div class="benefit-desc">Pomodoro streaks make studying feel like a game. Same psychology as Duolingo.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(245,158,11,0.1); color:var(--amber);">📊</div>
+        <div><div class="benefit-title">Real Study Hour Data</div><div class="benefit-desc">See exactly how many hours you studied per subject — no more guessing.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">🤖</div>
+        <div><div class="benefit-title">Free AI Coaching Every Week</div><div class="benefit-desc">The Weekly Digest is like having a personal tutor review your week — for free.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(236,72,153,0.1); color:var(--pink);">🧠</div>
+        <div><div class="benefit-title">Less Exam Stress</div><div class="benefit-desc">Organised plans + small daily steps dramatically reduce exam-season anxiety.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:1px; background:#E2E8F0; margin-bottom:24px;"></div>
+
+  <div class="section-label text-purple">Section 15 · Corporate Workers</div>
+
+  <div class="two-col" style="margin-bottom:28px;">
+    <div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">🎯</div>
+        <div><div class="benefit-title">OKRs → Daily Tasks</div><div class="benefit-desc">AI converts vague quarterly goals into concrete, actionable daily work.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">⏱️</div>
+        <div><div class="benefit-title">Deep Work Evidence</div><div class="benefit-desc">Hard data on focus hours per week — great for WFH accountability.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">📋</div>
+        <div><div class="benefit-title">One Hub for Everything</div><div class="benefit-desc">Replace 5 separate tools with one login and one dashboard.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">🔄</div>
+        <div><div class="benefit-title">Private Weekly Retrospective</div><div class="benefit-desc">AI flags drift before it becomes a crisis — every Sunday, automatically.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">📂</div>
+        <div><div class="benefit-title">Instant Document Intelligence</div><div class="benefit-desc">Upload a 40-page board report — get an executive summary in seconds.</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);">🧭</div>
+        <div><div class="benefit-title">Priority Clarity Always</div><div class="benefit-desc">High/Medium/Low tags + AI sorting answer "what do I do right now?"</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    <span class="callout-icon">🌍</span>
+    <div>
+      <div class="callout-title">Section 16 · Societal Benefits</div>
+      <div class="callout-body">FocusFlow <strong>democratises AI coaching</strong> for students who can't afford tutors · <strong>reduces cognitive overload</strong> and burnout in an always-on world · <strong>supports neurodivergent users</strong> (ADHD, dyslexia) with structured step-by-step plans · <strong>reduces educational inequality</strong> by giving every student equal access to intelligent academic planning.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Sections 14–16 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 17-18 COMPETITIVE + RISK -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">17–18 · Competitive &amp; Risk Analysis</span>
+  </div>
+
+  <div class="section-label text-amber">Section 17</div>
+  <div class="section-title">Competitive Landscape</div>
+
+  <table class="comp-table" style="margin-bottom:28px;">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>AI Goals</th>
+        <th>Doc Summary</th>
+        <th>Pomodoro</th>
+        <th>Weekly Digest</th>
+        <th>Student Focus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Notion</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+      <tr><td>Todoist</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+      <tr><td>Motion</td><td class="check">✓</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+      <tr><td>MyStudyLife</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="check">✓</td></tr>
+      <tr><td>Forest</td><td class="cross">✗</td><td class="cross">✗</td><td class="check">✓</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+      <tr class="winner"><td class="winner-name">FocusFlow ✅</td><td class="check bold">✓</td><td class="check bold">✓</td><td class="check bold">✓</td><td class="check bold">✓</td><td class="check bold">✓</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label text-red">Section 18</div>
+  <div class="section-title">Risk Analysis &amp; Mitigation</div>
+
+  <div class="risk-grid">
+    <div class="risk-card" style="border-color:var(--red);">
+      <div class="risk-header">
+        <div class="risk-title">Claude API Cost Spiral</div>
+        <div class="risk-pills">
+          <span class="risk-pill" style="background:rgba(239,68,68,0.1); color:var(--red);">High</span>
+          <span class="risk-pill" style="background:rgba(245,158,11,0.1); color:var(--amber);">Medium Impact</span>
+        </div>
+      </div>
+      <div class="risk-body">Cache responses, rate-limit by tier, use claude-haiku-4-5 for simple tasks and claude-sonnet-4-6 only for complex AI features.</div>
+    </div>
+    <div class="risk-card" style="border-color:var(--amber);">
+      <div class="risk-header">
+        <div class="risk-title">Low Free→Paid Conversion</div>
+        <div class="risk-pills">
+          <span class="risk-pill" style="background:rgba(245,158,11,0.1); color:var(--amber);">Medium</span>
+        </div>
+      </div>
+      <div class="risk-body">14-day Pro trial, in-app upgrade nudges at natural friction points.</div>
+    </div>
+    <div class="risk-card" style="border-color:var(--amber);">
+      <div class="risk-header">
+        <div class="risk-title">Solo Dev Burnout</div>
+        <div class="risk-pills">
+          <span class="risk-pill" style="background:rgba(245,158,11,0.1); color:var(--amber);">Medium</span>
+        </div>
+      </div>
+      <div class="risk-body">Strict one-feature-per-phase discipline. Avoid scope creep. Follow the 16-week plan.</div>
+    </div>
+    <div class="risk-card" style="border-color:var(--blue);">
+      <div class="risk-header">
+        <div class="risk-title">Big Tech Copies Feature</div>
+        <div class="risk-pills">
+          <span class="risk-pill" style="background:rgba(59,130,246,0.1); color:var(--blue);">Low</span>
+        </div>
+      </div>
+      <div class="risk-body">Community loyalty + niche focus are the moat. Move fast and build the brand.</div>
+    </div>
+    <div class="risk-card" style="border-color:var(--amber);">
+      <div class="risk-header">
+        <div class="risk-title">Data Privacy Concerns</div>
+        <div class="risk-pills">
+          <span class="risk-pill" style="background:rgba(245,158,11,0.1); color:var(--amber);">Medium</span>
+        </div>
+      </div>
+      <div class="risk-body">GDPR compliance, clear privacy policy, encrypted storage, no data resale ever.</div>
+    </div>
+    <div class="risk-card" style="border-color:var(--blue);">
+      <div class="risk-header">
+        <div class="risk-title">Low Organic Discovery</div>
+        <div class="risk-pills">
+          <span class="risk-pill" style="background:rgba(59,130,246,0.1); color:var(--blue);">Medium</span>
+        </div>
+      </div>
+      <div class="risk-body">SEO-optimised landing page + student communities (Reddit, Discord, TikTok).</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026</span>
+    <span class="page-footer-text">Sections 17–18 of 20</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ 19-20 LAUNCH + ROADMAP -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">FocusFlow</span>
+    <span class="page-header-section">19–20 · Launch Strategy &amp; Roadmap</span>
+  </div>
+
+  <div class="section-label text-green">Section 19</div>
+  <div class="section-title">Launch Strategy</div>
+
+  <div class="two-col" style="margin-bottom:24px;">
+    <div>
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--blue); margin-bottom:12px;">Pre-Launch (Weeks 13–16)</div>
+      <div class="launch-step">
+        <div class="step-num bg-blue">1</div>
+        <div class="step-content"><div class="step-title">Landing Page + Waitlist</div><div class="step-desc">Email capture with Mailchimp · Build anticipation</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-cyan">2</div>
+        <div class="step-content"><div class="step-title">Build in Public</div><div class="step-desc">Weekly progress posts on Twitter/X + LinkedIn</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-purple">3</div>
+        <div class="step-content"><div class="step-title">Student Communities</div><div class="step-desc">Reddit (r/GetStudying), Discord, student unions</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-pink">4</div>
+        <div class="step-content"><div class="step-title">Demo Video</div><div class="step-desc">2-min video on TikTok, YouTube Shorts, Instagram Reels</div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--green); margin-bottom:12px;">Launch Week</div>
+      <div class="launch-step">
+        <div class="step-num bg-green">5</div>
+        <div class="step-content"><div class="step-title">Product Hunt</div><div class="step-desc">Post Tuesday 12:01 AM PST — maximise votes</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-amber">6</div>
+        <div class="step-content"><div class="step-title">Waitlist Email</div><div class="step-desc">Personal founder note to every subscriber</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-blue">7</div>
+        <div class="step-content"><div class="step-title">Indie Hackers Story</div><div class="step-desc">"I built an AI planner in 16 weeks — here's how"</div></div>
+      </div>
+      <div class="launch-step">
+        <div class="step-num bg-green">8</div>
+        <div class="step-content"><div class="step-title">First 100 Offer</div><div class="step-desc">Lifetime 50% off Pro for the first 100 sign-ups</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:1px; background:#E2E8F0; margin-bottom:24px;"></div>
+
+  <div class="section-label text-blue">Section 20</div>
+  <div class="section-title">12-Month Growth Roadmap</div>
+
+  <div style="margin-bottom:24px;">
+    <div class="roadmap-row">
+      <div class="roadmap-month">Months 1–4</div>
+      <div class="roadmap-tag text-blue" style="background:rgba(59,130,246,0.08);">MVP Build</div>
+      <div class="roadmap-desc">All 7 features built, internal testing, private beta with 20 users</div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-month">Month 5</div>
+      <div class="roadmap-tag text-cyan" style="background:rgba(6,182,212,0.08);">Public Beta</div>
+      <div class="roadmap-desc">Product Hunt, waitlist emails, free tier open to all</div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-month">Month 6</div>
+      <div class="roadmap-tag text-green" style="background:rgba(16,185,129,0.08);">Pro Launch</div>
+      <div class="roadmap-desc">Stripe billing live · Target: 100 paying users</div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-month">Months 7–8</div>
+      <div class="roadmap-tag text-amber" style="background:rgba(245,158,11,0.08);">Polish</div>
+      <div class="roadmap-desc">Performance tuning, PWA mobile experience, user-requested features</div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-month">Month 9</div>
+      <div class="roadmap-tag text-purple" style="background:rgba(139,92,246,0.08);">Team Plan</div>
+      <div class="roadmap-desc">Workspace sharing, manager dashboard, bulk invite</div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-month">Month 10</div>
+      <div class="roadmap-tag text-pink" style="background:rgba(236,72,153,0.08);">University</div>
+      <div class="roadmap-desc">First institutional licensing deal pitched and closed</div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-month">Month 11</div>
+      <div class="roadmap-tag text-red" style="background:rgba(239,68,68,0.08);">Mobile App</div>
+      <div class="roadmap-desc">React Native iOS + Android app submitted to app stores</div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-month">Month 12</div>
+      <div class="roadmap-tag text-green" style="background:rgba(16,185,129,0.08);">Scale</div>
+      <div class="roadmap-desc">1,000 Pro users · Sustainable MRR · Consider first hire</div>
+    </div>
+  </div>
+
+  <!-- FINAL CTA -->
+  <div style="background:linear-gradient(135deg,#0F172A,#1E3A5F); border-radius:16px; padding:32px; text-align:center;">
+    <div style="font-size:13px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--cyan); margin-bottom:12px;">Call to Action</div>
+    <div style="font-size:24px; font-weight:900; color:white; line-height:1.3; margin-bottom:12px;">Start Week 1 today.<br/>Build the repo. Ship the auth. The rest follows.</div>
+    <div style="font-size:13px; color:rgba(255,255,255,0.5);">The market is waiting. The plan is complete. The window is open.</div>
+    <div style="margin-top:20px; display:flex; gap:12px; justify-content:center;">
+      <span class="badge badge-blue">16 Weeks</span>
+      <span class="badge badge-green">7 Features</span>
+      <span class="badge badge-amber">1 Founder</span>
+      <span class="badge badge-cyan">August 2026</span>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">FOCUSFLOW · CONFIDENTIAL · 2026 · All Rights Reserved</span>
+    <span class="page-footer-text">focusflow.app</span>
+  </div>
+</div>
+
+</body>
+</html>

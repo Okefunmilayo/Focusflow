@@ -1,0 +1,61 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import cron from 'node-cron';
+
+import { env } from './config/env';
+import { errorHandler, notFound } from './middleware/error.middleware';
+import { generalLimiter } from './middleware/rateLimit.middleware';
+
+import authRoutes      from './routes/auth.routes';
+import tasksRoutes     from './routes/tasks.routes';
+import aiRoutes        from './routes/ai.routes';
+import pomodoroRoutes  from './routes/pomodoro.routes';
+import analyticsRoutes from './routes/analytics.routes';
+
+const app = express();
+
+// ── Security & Parsing ────────────────────────────────────
+app.use(helmet());
+app.use(cors({ origin: env.clientUrl, credentials: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan(env.isDev() ? 'dev' : 'combined'));
+app.use(generalLimiter);
+
+// ── Health Check ──────────────────────────────────────────
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', app: 'FocusFlow API', version: '1.0.0' });
+});
+
+// ── API Routes ────────────────────────────────────────────
+app.use('/api/v1/auth',      authRoutes);
+app.use('/api/v1/tasks',     tasksRoutes);
+app.use('/api/v1/ai',        aiRoutes);
+app.use('/api/v1/pomodoro',  pomodoroRoutes);
+app.use('/api/v1/analytics', analyticsRoutes);
+
+// ── Weekly AI Digest Cron — Every Sunday at 8:00 PM ──────
+cron.schedule('0 20 * * 0', async () => {
+  console.log('[CRON] Running weekly AI digest job...');
+  // Digest logic will be wired in Phase 7
+});
+
+// ── Error Handling ────────────────────────────────────────
+app.use(notFound);
+app.use(errorHandler);
+
+// ── Start Server ──────────────────────────────────────────
+app.listen(env.port, () => {
+  console.log(`
+  ╔════════════════════════════════════════╗
+  ║   FocusFlow API — Running             ║
+  ║   Port    : ${env.port}                     ║
+  ║   Env     : ${env.nodeEnv}              ║
+  ║   AI      : Anthropic Claude API      ║
+  ╚════════════════════════════════════════╝
+  `);
+});
+
+export default app;
