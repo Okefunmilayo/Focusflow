@@ -7,7 +7,9 @@ import { TaskStatus, Priority, Category } from '@prisma/client';
 // ── Get All Tasks ─────────────────────────────────────────
 export const getTasks = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { status, priority, category } = req.query;
+    const status   = req.query.status   as string | undefined;
+    const priority = req.query.priority as string | undefined;
+    const category = req.query.category as string | undefined;
 
     const tasks = await prisma.task.findMany({
       where: {
@@ -54,8 +56,8 @@ export const createTask = async (req: AuthRequest, res: Response): Promise<void>
 // ── Update Task ───────────────────────────────────────────
 export const updateTask = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
-    const existing = await prisma.task.findFirst({ where: { id, userId: req.userId } });
+    const id = req.params.id as string;
+    const existing = await prisma.task.findFirst({ where: { id, userId: req.userId! } });
 
     if (!existing) {
       res.status(404).json({ message: 'Task not found' });
@@ -76,8 +78,8 @@ export const updateTask = async (req: AuthRequest, res: Response): Promise<void>
 // ── Delete Task ───────────────────────────────────────────
 export const deleteTask = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
-    const existing = await prisma.task.findFirst({ where: { id, userId: req.userId } });
+    const id = req.params.id as string;
+    const existing = await prisma.task.findFirst({ where: { id, userId: req.userId! } });
 
     if (!existing) {
       res.status(404).json({ message: 'Task not found' });
@@ -94,11 +96,11 @@ export const deleteTask = async (req: AuthRequest, res: Response): Promise<void>
 // ── Update Task Status ────────────────────────────────────
 export const updateTaskStatus = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id }     = req.params;
+    const id = req.params.id as string;
     const { status } = req.body;
 
     const task = await prisma.task.updateMany({
-      where: { id, userId: req.userId },
+      where: { id, userId: req.userId! },
       data:  { status },
     });
 

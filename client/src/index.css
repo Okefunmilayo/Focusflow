@@ -3,14 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  * { @apply border-border; }
   body {
     @apply bg-slate-50 text-slate-900 font-sans antialiased;
-  }
-  :root {
-    --background: 248 250 252;
-    --foreground: 15 23 42;
-    --border:     226 232 240;
   }
 }
 
