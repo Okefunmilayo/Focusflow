@@ -137,8 +137,9 @@ export default function DocumentsPage() {
       form.append('file', file);
       await api.post('/documents/upload', form);
       qc.invalidateQueries({ queryKey: ['documents'] });
-    } catch {
-      setUploadError('Upload failed. Please try again.');
+    } catch (err: unknown) {
+      const detail = (err as { response?: { data?: { detail?: string; message?: string } } })?.response?.data;
+      setUploadError(detail?.detail ?? detail?.message ?? 'Upload failed. Please try again.');
     } finally {
       setUploading(false);
     }

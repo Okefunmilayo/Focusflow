@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -23,13 +23,10 @@ const storage = multer.diskStorage({
   },
 });
 
+// Accept any file — validate type manually so multer errors don't swallow the request
 const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: (_req, file, cb) => {
-    if (file.mimetype === 'application/pdf') cb(null, true);
-    else cb(new Error('Only PDF files are allowed'));
-  },
 });
 
 // ── GET /documents ────────────────────────────────────────────
@@ -48,43 +45,79 @@ router.get('/', async (req, res) => {
 });
 
 // ── POST /documents/upload ────────────────────────────────────
-router.post('/upload', upload.single('file'), async (req, res) => {
-  const file = req.file;
-  if (!file) { res.status(400).json({ message: 'No file uploaded' }); return; }
-  const userId = (req as AuthRequest).userId!;
-
-  try {
-    // Extract real text from PDF
-    const buffer      = fs.readFileSync(file.path);
-    const parsed      = await pdfParse(buffer);
-    const fileContent = parsed.text?.trim() || `[PDF: ${file.originalname} — no extractable text]`;
-    const analysis    = await analyseDocument(fileContent);
-
-    const doc = await prisma.document.create({
-      data: {
-        userId,
-        filename:  file.originalname,
-        fileUrl:   `/uploads/${file.filename}`,
-        fileSize:  file.size,
-        mimeType:  file.mimetype,
-        summary:   analysis.summary,
-        keyPoints: analysis.keyPoints,
-        flashcards: {
-          create: analysis.flashcards.map((fc: { question: string; answer: string }) => ({
-            question: fc.question,
-            answer:   fc.answer,
-          })),
-        },
-      },
-      include: { flashcards: true },
+router.post(
+  '/upload',
+  (req: Request, res: Response, next: NextFunction) => {
+    upload.single('file')(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        res.status(400).json({ message: `Upload error: ${err.message}` });
+        return;
+      }
+      if (err) {
+        res.status(400).json({ message: err.message ?? 'Upload failed' });
+        return;
+      }
+      next();
     });
+  },
+  async (req: Request, res: Response) => {
+    const file = req.file;
 
-    res.status(201).json({ document: doc });
-  } catch (err) {
-    console.error('[Documents] upload error:', err);
-    res.status(500).json({ message: 'Analysis failed. Please try again.' });
+    if (!file) {
+      console.error('[Documents] req.file is undefined. Content-Type:', req.headers['content-type']);
+      res.status(400).json({ message: 'No file received. Please select a PDF file and try again.' });
+      return;
+    }
+
+    // Manual type check
+    const isPdf = file.mimetype === 'application/pdf' || file.originalname.toLowerCase().endsWith('.pdf');
+    if (!isPdf) {
+      fs.unlinkSync(file.path);
+      res.status(400).json({ message: 'Only PDF files are supported.' });
+      return;
+    }
+
+    const userId = (req as AuthRequest).userId!;
+
+    try {
+      let fileContent = `[PDF: ${file.originalname}]`;
+      try {
+        const buffer = fs.readFileSync(file.path);
+        const parsed = await pdfParse(buffer);
+        if (parsed.text?.trim()) fileContent = parsed.text.trim();
+      } catch (pdfErr) {
+        console.warn('[Documents] pdf-parse failed, using filename stub:', pdfErr);
+      }
+
+      const analysis = await analyseDocument(fileContent);
+
+      const doc = await prisma.document.create({
+        data: {
+          userId,
+          filename:  file.originalname,
+          fileUrl:   `/uploads/${file.filename}`,
+          fileSize:  file.size,
+          mimeType:  file.mimetype,
+          summary:   analysis.summary,
+          keyPoints: analysis.keyPoints,
+          flashcards: {
+            create: analysis.flashcards.map((fc: { question: string; answer: string }) => ({
+              question: fc.question,
+              answer:   fc.answer,
+            })),
+          },
+        },
+        include: { flashcards: true },
+      });
+
+      res.status(201).json({ document: doc });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error('[Documents] upload error:', msg);
+      res.status(500).json({ message: 'Analysis failed. Please try again.', detail: msg });
+    }
   }
-});
+);
 
 // ── DELETE /documents/:id ─────────────────────────────────────
 router.delete('/:id', async (req, res) => {
