@@ -59,7 +59,8 @@ router.post('/webhook', async (req: Request, res: Response) => {
     const session = event.data.object as { metadata?: { userId?: string } };
     const userId  = session.metadata?.userId;
     if (userId) {
-      console.log(`[Billing] Pro subscription activated for user ${userId}`);
+      await prisma.user.update({ where: { id: userId }, data: { plan: 'PRO' } });
+      console.log(`[Billing] Plan upgraded to PRO for user ${userId}`);
     }
   }
 
@@ -67,8 +68,13 @@ router.post('/webhook', async (req: Request, res: Response) => {
 });
 
 // ── GET /billing/status ───────────────────────────────────────
-router.get('/status', protect, async (_req: Request, res: Response) => {
-  res.json({ plan: 'FREE', features: ['tasks', 'timer', 'ai_goals', 'documents'] });
+router.get('/status', protect, async (req: Request, res: Response) => {
+  const userId = (req as AuthRequest).userId!;
+  const user   = await prisma.user.findUnique({ where: { id: userId }, select: { plan: true } });
+  const plan   = user?.plan ?? 'FREE';
+  res.json({ plan, features: plan === 'PRO'
+    ? ['tasks', 'timer', 'ai_goals', 'documents', 'digest', 'priority_support']
+    : ['tasks', 'timer', 'ai_goals', 'documents'] });
 });
 
 export default router;

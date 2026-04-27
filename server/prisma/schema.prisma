@@ -14,6 +14,7 @@ model User {
   email            String    @unique
   password         String
   avatar           String?
+  plan             String    @default("FREE")
   isEmailVerified  Boolean   @default(false)
   resetToken       String?
   resetTokenExpiry DateTime?
@@ -37,6 +38,7 @@ model RefreshToken {
   expiresAt DateTime
   createdAt DateTime @default(now())
 
+  @@index([userId])
   @@map("refresh_tokens")
 }
 
@@ -62,6 +64,9 @@ model Task {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
+  @@index([userId])
+  @@index([userId, status])
+  @@index([userId, updatedAt])
   @@map("tasks")
 }
 
@@ -95,6 +100,9 @@ model PomodoroSession {
   task      Task?    @relation(fields: [taskId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
 
+  @@index([userId])
+  @@index([userId, completed])
+  @@index([userId, createdAt])
   @@map("pomodoro_sessions")
 }
 
@@ -112,6 +120,7 @@ model Document {
   flashcards Flashcard[]
   createdAt  DateTime    @default(now())
 
+  @@index([userId])
   @@map("documents")
 }
 
@@ -141,5 +150,6 @@ model WeeklyDigest {
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())
 
+  @@index([userId])
   @@map("weekly_digests")
 }
