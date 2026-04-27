@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
 import { prisma } from '../config/prisma';
 import { env } from '../config/env';
+import { sendWelcomeEmail } from '../services/email.service';
 
 const signAccessToken  = (userId: string, email: string) =>
   jwt.sign({ userId, email }, env.jwtSecret, { expiresIn: env.jwtExpiresIn as jwt.SignOptions['expiresIn'] });
@@ -53,6 +54,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       data: { id: uuidv4(), token: refreshToken, userId: user.id,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
     });
+
+    // Send welcome email (non-blocking — don't fail registration if email fails)
+    sendWelcomeEmail(user.email, user.name).catch((e) =>
+      console.error('[Email] Welcome email failed:', e.message)
+    );
 
     res.status(201).json({ success: true, message: 'Account created successfully', user, accessToken, refreshToken });
   } catch {

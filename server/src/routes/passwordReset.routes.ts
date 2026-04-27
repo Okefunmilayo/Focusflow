@@ -3,6 +3,7 @@ import { body, validationResult } from 'express-validator';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../config/prisma';
+import { sendPasswordResetEmail } from '../services/email.service';
 
 const router = Router();
 
@@ -28,10 +29,9 @@ router.post('/forgot-password',
         data:  { resetToken: token, resetTokenExpiry: expires },
       });
 
-      // In production: send email with reset link
-      // For development: log the link to the console
-      const resetUrl = `http://localhost:5173/reset-password?token=${token}`;
-      console.log(`[Password Reset] Reset link for ${email}: ${resetUrl}`);
+      const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
+      const resetUrl  = `${clientUrl}/reset-password?token=${token}`;
+      await sendPasswordResetEmail(email, resetUrl);
 
       res.json({ message: 'If an account exists, a reset link has been sent.' });
     } catch {
