@@ -1,13 +1,14 @@
 import sgMail from '@sendgrid/mail';
 import { env } from '../config/env';
 
-if (env.sendgridApiKey) {
+const isConfigured = () =>
+  Boolean(env.sendgridApiKey) && env.sendgridApiKey.startsWith('SG.');
+
+if (isConfigured()) {
   sgMail.setApiKey(env.sendgridApiKey);
 }
 
 const FROM = { email: env.emailFrom, name: 'FocusFlow' };
-
-const isConfigured = () => Boolean(env.sendgridApiKey);
 
 // ── Password Reset ────────────────────────────────────────────
 export const sendPasswordResetEmail = async (

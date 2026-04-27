@@ -23,7 +23,11 @@ const app = express();
 
 // ── Security & Parsing ────────────────────────────────────
 app.use(helmet());
-app.use(cors({ origin: env.clientUrl, credentials: true }));
+// Allow localhost on any port in dev (Vite picks 5173/5174/etc depending on what's free)
+const allowedOrigins = env.isDev()
+  ? /^http:\/\/localhost:\d+$/
+  : env.clientUrl;
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(env.isDev() ? 'dev' : 'combined'));
