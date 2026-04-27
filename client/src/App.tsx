@@ -10,8 +10,10 @@ import TimerPage      from '@/pages/TimerPage';
 import AnalyticsPage  from '@/pages/AnalyticsPage';
 import AIGoalsPage    from '@/pages/AIGoalsPage';
 import DocumentsPage  from '@/pages/DocumentsPage';
-import DigestPage     from '@/pages/DigestPage';
-import BillingPage    from '@/pages/BillingPage';
+import DigestPage           from '@/pages/DigestPage';
+import BillingPage          from '@/pages/BillingPage';
+import ForgotPasswordPage   from '@/pages/ForgotPasswordPage';
+import ResetPasswordPage    from '@/pages/ResetPasswordPage';
 
 // Layout
 import AppLayout from '@/components/layout/AppLayout';
@@ -30,8 +32,10 @@ export default function App() {
   return (
     <Routes>
       {/* Guest routes */}
-      <Route path="/login"    element={<GuestRoute><LoginPage /></GuestRoute>} />
-      <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
+      <Route path="/login"            element={<GuestRoute><LoginPage /></GuestRoute>} />
+      <Route path="/register"         element={<GuestRoute><RegisterPage /></GuestRoute>} />
+      <Route path="/forgot-password"  element={<GuestRoute><ForgotPasswordPage /></GuestRoute>} />
+      <Route path="/reset-password"   element={<ResetPasswordPage />} />
 
       {/* Protected routes */}
       <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

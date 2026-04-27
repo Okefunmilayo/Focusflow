@@ -49,8 +49,9 @@ export default function LoginPage() {
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="label text-slate-300">Email</label>
+              <label htmlFor="login-email" className="label text-slate-300">Email</label>
               <input
+                id="login-email"
                 type="email"
                 className="input bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:ring-blue-500"
                 placeholder="you@example.com"
@@ -60,8 +61,12 @@ export default function LoginPage() {
               />
             </div>
             <div>
-              <label className="label text-slate-300">Password</label>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="login-password" className="label text-slate-300">Password</label>
+                <Link to="/forgot-password" className="text-xs text-blue-400 hover:text-blue-300">Forgot password?</Link>
+              </div>
               <input
+                id="login-password"
                 type="password"
                 className="input bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:ring-blue-500"
                 placeholder="••••••••"
