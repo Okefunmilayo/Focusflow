@@ -7,6 +7,15 @@ const client = new Anthropic({ apiKey: env.anthropicApiKey });
 const SONNET = 'claude-sonnet-4-6';
 const HAIKU  = 'claude-haiku-4-5-20251001';
 
+// Strip markdown code fences Claude sometimes adds despite instructions
+const parseJSON = <T>(text: string): T => {
+  const cleaned = text
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```\s*$/i, '')
+    .trim();
+  return JSON.parse(cleaned) as T;
+};
+
 // ── Goal Breakdown ────────────────────────────────────────
 export interface GoalStep {
   phase:       string;
@@ -44,7 +53,7 @@ Be specific, realistic, and actionable. Max 6 phases.`,
   });
 
   const text = message.content[0].type === 'text' ? message.content[0].text : '[]';
-  return JSON.parse(text) as GoalStep[];
+  return parseJSON<GoalStep[]>(text);
 };
 
 // ── Document Summary & Flashcards ─────────────────────────
@@ -76,7 +85,7 @@ ${content.slice(0, 150000)}`,
   });
 
   const text = message.content[0].type === 'text' ? message.content[0].text : '{}';
-  return JSON.parse(text) as DocumentAnalysis;
+  return parseJSON<DocumentAnalysis>(text);
 };
 
 // ── Weekly AI Digest ──────────────────────────────────────
@@ -118,7 +127,7 @@ Return ONLY valid JSON (no markdown):
   });
 
   const text = message.content[0].type === 'text' ? message.content[0].text : '{}';
-  return JSON.parse(text) as DigestResult;
+  return parseJSON<DigestResult>(text);
 };
 
 // ── Task Suggestions (Haiku — fast & cheap) ───────────────
@@ -134,5 +143,5 @@ export const suggestTaskBreakdown = async (taskTitle: string): Promise<string[]>
   });
 
   const text = message.content[0].type === 'text' ? message.content[0].text : '[]';
-  return JSON.parse(text) as string[];
+  return parseJSON<string[]>(text);
 };
