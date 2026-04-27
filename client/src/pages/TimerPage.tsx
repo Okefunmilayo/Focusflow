@@ -14,11 +14,11 @@ const MODES: { id: Mode; label: string; minutes: number; color: string; bg: stri
 function pad(n: number) { return String(n).padStart(2, '0'); }
 
 export default function TimerPage() {
-  const [mode,      setMode]      = useState<Mode>('WORK');
-  const [seconds,   setSeconds]   = useState(25 * 60);
-  const [running,   setRunning]   = useState(false);
-  const [sessions,  setSessions]  = useState(0);
-  const [taskId,    setTaskId]    = useState('');
+  const [mode,     setMode]     = useState<Mode>('WORK');
+  const [seconds,  setSeconds]  = useState(25 * 60);
+  const [running,  setRunning]  = useState(false);
+  const [sessions, setSessions] = useState(0);
+  const [taskId,   setTaskId]   = useState('');
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const qc = useQueryClient();
 
@@ -32,7 +32,6 @@ export default function TimerPage() {
     queryKey: ['pomodoro-sessions'],
     queryFn:  () => api.get('/pomodoro/sessions').then((r) => r.data),
   });
-
   const { data: tasksData } = useQuery<{ tasks: { id: string; title: string }[] }>({
     queryKey: ['tasks-todo'],
     queryFn:  () => api.get('/tasks?status=TODO').then((r) => r.data),
@@ -58,7 +57,6 @@ export default function TimerPage() {
             clearInterval(intervalRef.current!);
             setRunning(false);
             if (mode === 'WORK') logSession.mutate();
-            // browser notification
             if (Notification.permission === 'granted') {
               new Notification('FocusFlow', {
                 body: mode === 'WORK' ? 'Focus session complete! Take a break.' : 'Break over — back to work!',
@@ -75,56 +73,47 @@ export default function TimerPage() {
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [running, mode]);
 
-  const switchMode = (m: Mode) => {
-    setMode(m);
-    setRunning(false);
-    setSeconds(MODES.find((x) => x.id === m)!.minutes * 60);
-  };
-
+  const switchMode = (m: Mode) => { setMode(m); setRunning(false); setSeconds(MODES.find((x) => x.id === m)!.minutes * 60); };
   const reset = () => { setRunning(false); setSeconds(current.minutes * 60); };
-
-  const requestNotif = () => {
-    if (Notification.permission === 'default') Notification.requestPermission();
-  };
+  const requestNotif = () => { if (Notification.permission === 'default') Notification.requestPermission(); };
 
   const streak  = pomData?.streak ?? 0;
-  const todayMs = pomData?.sessions
-    ?.reduce((a, s) => a + s.duration, 0) ?? 0;
-
-  const radius = 88;
-  const circ   = 2 * Math.PI * radius;
-  const dash   = circ - (pct / 100) * circ;
+  const todayMs = pomData?.sessions?.reduce((a, s) => a + s.duration, 0) ?? 0;
+  const radius  = 80;
+  const circ    = 2 * Math.PI * radius;
+  const dash    = circ - (pct / 100) * circ;
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Focus Timer</h1>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto w-full">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Focus Timer</h1>
         <p className="text-slate-500 text-sm mt-1">Stay in the zone with Pomodoro sessions.</p>
       </div>
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="card p-4 text-center">
-          <div className="text-2xl font-bold text-orange-500 flex items-center justify-center gap-1">
-            {streak} <Flame className="w-5 h-5" />
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8" role="region" aria-label="Session statistics">
+        <div className="card p-3 sm:p-4 text-center">
+          <div className="text-xl sm:text-2xl font-bold text-orange-500 flex items-center justify-center gap-1">
+            {streak} <Flame className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
           </div>
           <div className="text-xs text-slate-400 mt-1">Day Streak</div>
         </div>
-        <div className="card p-4 text-center">
-          <div className="text-2xl font-bold text-blue-600">{sessions}</div>
-          <div className="text-xs text-slate-400 mt-1">This Session</div>
+        <div className="card p-3 sm:p-4 text-center">
+          <div className="text-xl sm:text-2xl font-bold text-blue-600">{sessions}</div>
+          <div className="text-xs text-slate-400 mt-1">Sessions</div>
         </div>
-        <div className="card p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{Math.round(todayMs / 60)}m</div>
+        <div className="card p-3 sm:p-4 text-center">
+          <div className="text-xl sm:text-2xl font-bold text-green-600">{Math.round(todayMs / 60)}m</div>
           <div className="text-xs text-slate-400 mt-1">Total Focus</div>
         </div>
       </div>
 
       {/* Mode Tabs */}
-      <div className="flex gap-2 mb-8 bg-slate-100 p-1 rounded-xl">
+      <div className="flex gap-1 sm:gap-2 mb-6 sm:mb-8 bg-slate-100 p-1 rounded-xl" role="tablist" aria-label="Timer mode">
         {MODES.map((m) => (
-          <button key={m.id} onClick={() => switchMode(m.id)}
-            className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+          <button key={m.id} role="tab" aria-selected={mode === m.id}
+            onClick={() => switchMode(m.id)}
+            className={`flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               mode === m.id ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'
             }`}>
             {m.label}
@@ -133,11 +122,11 @@ export default function TimerPage() {
       </div>
 
       {/* Timer Circle */}
-      <div className="flex flex-col items-center mb-8">
-        <div className="relative">
-          <svg width="220" height="220" className="-rotate-90">
-            <circle cx="110" cy="110" r={radius} fill="none" stroke="#E2E8F0" strokeWidth="8" />
-            <circle cx="110" cy="110" r={radius} fill="none"
+      <div className="flex flex-col items-center mb-6 sm:mb-8">
+        <div className="relative" role="timer" aria-label={`${pad(mins)} minutes ${pad(secs)} seconds remaining`}>
+          <svg width="200" height="200" className="-rotate-90 sm:w-[220px] sm:h-[220px]" aria-hidden="true">
+            <circle cx="100" cy="100" r={radius} fill="none" stroke="#E2E8F0" strokeWidth="8" />
+            <circle cx="100" cy="100" r={radius} fill="none"
               stroke={mode === 'WORK' ? '#3B82F6' : mode === 'SHORT_BREAK' ? '#10B981' : '#8B5CF6'}
               strokeWidth="8" strokeLinecap="round"
               strokeDasharray={circ} strokeDashoffset={dash}
@@ -145,33 +134,33 @@ export default function TimerPage() {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-5xl font-bold text-slate-900 font-mono tabular-nums">
+            <span className="text-4xl sm:text-5xl font-bold text-slate-900 font-mono tabular-nums">
               {pad(mins)}:{pad(secs)}
             </span>
-            <span className={`text-sm font-medium mt-1 ${current.color}`}>{current.label}</span>
+            <span className={`text-xs sm:text-sm font-medium mt-1 ${current.color}`}>{current.label}</span>
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center gap-4 mt-6">
-          <button onClick={reset}
+        <div className="flex items-center gap-4 mt-5 sm:mt-6">
+          <button onClick={reset} aria-label="Reset timer"
             className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-colors">
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-4 h-4" aria-hidden="true" />
           </button>
           <button onClick={() => { requestNotif(); setRunning((r) => !r); }}
+            aria-label={running ? 'Pause timer' : 'Start timer'}
             className={`w-16 h-16 rounded-full flex items-center justify-center text-white shadow-lg transition-transform active:scale-95 ${current.bg}`}>
-            {running ? <Pause className="w-7 h-7" /> : <Play className="w-7 h-7 ml-0.5" />}
+            {running ? <Pause className="w-7 h-7" aria-hidden="true" /> : <Play className="w-7 h-7 ml-0.5" aria-hidden="true" />}
           </button>
-          <div className="w-10 h-10" />
+          <div className="w-10 h-10" aria-hidden="true" />
         </div>
       </div>
 
       {/* Link to Task */}
       <div className="card p-4">
-        <label className="label flex items-center gap-2">
-          <CheckSquare className="w-4 h-4 text-blue-500" /> Link this session to a task
+        <label htmlFor="task-select" className="label flex items-center gap-2">
+          <CheckSquare className="w-4 h-4 text-blue-500" aria-hidden="true" /> Link this session to a task
         </label>
-        <select className="input mt-1" value={taskId} onChange={(e) => setTaskId(e.target.value)}>
+        <select id="task-select" className="input mt-1" value={taskId} onChange={(e) => setTaskId(e.target.value)}>
           <option value="">No task selected</option>
           {tasksData?.tasks?.map((t) => (
             <option key={t.id} value={t.id}>{t.title}</option>

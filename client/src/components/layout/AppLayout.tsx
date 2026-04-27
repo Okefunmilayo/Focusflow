@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, CheckSquare, Timer, BarChart2,
-  Sparkles, FileText, LogOut, Zap, BookOpen, CreditCard
+  Sparkles, FileText, LogOut, Zap, BookOpen, CreditCard, Menu, X
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { api } from '@/services/api';
@@ -20,6 +21,7 @@ const navItems = [
 export default function AppLayout() {
   const { user, logout, refreshToken } = useAuthStore();
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
     await api.post('/auth/logout', { refreshToken }).catch(() => {});
@@ -27,66 +29,128 @@ export default function AppLayout() {
     navigate('/login');
   };
 
-  return (
-    <div className="flex h-screen bg-slate-50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 flex flex-col">
-        {/* Logo */}
-        <div className="p-6 border-b border-slate-700">
+  const closeSidebar = () => setSidebarOpen(false);
+
+  const SidebarContent = (
+    <>
+      {/* Logo */}
+      <div className="p-6 border-b border-slate-700 flex items-center justify-between">
+        <div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center" aria-hidden="true">
               <Zap className="w-4 h-4 text-white" />
             </div>
             <span className="text-white font-bold text-lg">FocusFlow</span>
           </div>
           <p className="text-slate-400 text-xs mt-1">AI Productivity Planner</p>
         </div>
+        {/* Close button — mobile only */}
+        <button
+          onClick={closeSidebar}
+          aria-label="Close menu"
+          className="lg:hidden text-slate-400 hover:text-white p-1"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
 
-        {/* Nav */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {navItems.map(({ to, icon: Icon, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`
-              }
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* User + Logout */}
-        <div className="p-4 border-t border-slate-700">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-              {user?.name?.[0]?.toUpperCase() ?? 'U'}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-medium truncate">{user?.name}</p>
-              <p className="text-slate-400 text-xs truncate">{user?.email}</p>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 w-full px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg text-sm transition-colors"
+      {/* Nav */}
+      <nav role="navigation" aria-label="Main navigation" className="flex-1 p-4 space-y-1 overflow-y-auto">
+        {navItems.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            onClick={closeSidebar}
+            aria-label={label}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+              }`
+            }
           >
-            <LogOut className="w-4 h-4" />
-            Sign out
-          </button>
+            <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* User + Logout */}
+      <div className="p-4 border-t border-slate-700">
+        <div className="flex items-center gap-3 mb-3">
+          <div
+            className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+            aria-hidden="true"
+          >
+            {user?.name?.[0]?.toUpperCase() ?? 'U'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-sm font-medium truncate">{user?.name}</p>
+            <p className="text-slate-400 text-xs truncate">{user?.email}</p>
+          </div>
         </div>
+        <button
+          onClick={handleLogout}
+          aria-label="Sign out of FocusFlow"
+          className="flex items-center gap-2 w-full px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg text-sm transition-colors"
+        >
+          <LogOut className="w-4 h-4" aria-hidden="true" />
+          Sign out
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="flex h-screen bg-slate-50">
+
+      {/* ── Mobile overlay ───────────────────────────── */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={closeSidebar}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* ── Sidebar — slides in on mobile, fixed on desktop ── */}
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 flex flex-col transform transition-transform duration-200
+          lg:relative lg:translate-x-0 lg:z-auto
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+        aria-label="Sidebar"
+      >
+        {SidebarContent}
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-auto">
-        <Outlet />
-      </main>
+      {/* ── Main area ────────────────────────────────── */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+        {/* Mobile top bar */}
+        <header className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-slate-200 flex-shrink-0">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open menu"
+            className="text-slate-600 hover:text-slate-900 p-1"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center" aria-hidden="true">
+              <Zap className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="font-bold text-slate-900">FocusFlow</span>
+          </div>
+        </header>
+
+        {/* Page content */}
+        <main role="main" className="flex-1 overflow-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }
