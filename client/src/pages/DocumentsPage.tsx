@@ -135,7 +135,7 @@ export default function DocumentsPage() {
     try {
       const form = new FormData();
       form.append('file', file);
-      await api.post('/documents/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await api.post('/documents/upload', form);
       qc.invalidateQueries({ queryKey: ['documents'] });
     } catch {
       setUploadError('Upload failed. Please try again.');
