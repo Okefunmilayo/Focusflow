@@ -135,7 +135,9 @@ export default function DocumentsPage() {
     try {
       const form = new FormData();
       form.append('file', file);
-      await api.post('/documents/upload', form);
+      await api.post('/documents/upload', form, {
+        headers: { 'Content-Type': undefined },
+      });
       qc.invalidateQueries({ queryKey: ['documents'] });
     } catch (err: unknown) {
       const detail = (err as { response?: { data?: { detail?: string; message?: string } } })?.response?.data;
