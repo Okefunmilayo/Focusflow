@@ -32,7 +32,7 @@ Thumbs.db
 .idea/
 
 # Prisma
-server/prisma/migrations/
+
 
 # Uploads (local only)
 server/uploads/

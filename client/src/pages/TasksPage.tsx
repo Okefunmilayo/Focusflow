@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, X, Calendar } from 'lucide-react';
+import { Plus, X, Calendar, ChevronDown } from 'lucide-react';
 import { api } from '@/services/api';
 
 type Status   = 'TODO' | 'IN_PROGRESS' | 'DONE';
@@ -29,6 +29,51 @@ const CATEGORY_STYLES: Record<Category, string> = {
   STUDY:    'bg-purple-50 text-purple-600',
   PERSONAL: 'bg-teal-50 text-teal-600',
 };
+
+function FilterSelect({ value, onChange, options, placeholder }: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+  placeholder: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const selected = options.find((o) => o.value === value);
+
+  return (
+    <div ref={ref} className="relative w-full sm:max-w-xs">
+      <button type="button" onClick={() => setOpen((o) => !o)}
+        className="input w-full text-sm flex items-center justify-between gap-2 text-left"
+        aria-haspopup="listbox" aria-expanded={open}>
+        <span className={selected ? 'text-slate-800' : 'text-slate-400'}>
+          {selected ? selected.label : placeholder}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-slate-400 flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <ul role="listbox" className="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 overflow-hidden">
+          {options.map((opt) => (
+            <li key={opt.value} role="option" aria-selected={value === opt.value}
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+              className={`px-4 py-2.5 text-sm cursor-pointer transition-colors
+                ${value === opt.value ? 'bg-blue-50 text-blue-600 font-medium' : 'text-slate-700 hover:bg-slate-50'}`}>
+              {opt.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 function NewTaskModal({ onClose, onSave }: { onClose: () => void; onSave: (d: Partial<Task>) => void }) {
   const [title,       setTitle]       = useState('');
@@ -179,24 +224,32 @@ export default function TasksPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 mb-4 sm:mb-6 flex-wrap">
-        <select className="input flex-1 min-w-0 sm:max-w-xs text-sm" value={filterPriority}
-          aria-label="Filter by priority" onChange={(e) => setFilterPriority(e.target.value)}>
-          <option value="">All Priorities</option>
-          <option value="HIGH">High</option>
-          <option value="MEDIUM">Medium</option>
-          <option value="LOW">Low</option>
-        </select>
-        <select className="input flex-1 min-w-0 sm:max-w-xs text-sm" value={filterCategory}
-          aria-label="Filter by category" onChange={(e) => setFilterCategory(e.target.value)}>
-          <option value="">All Categories</option>
-          <option value="WORK">Work</option>
-          <option value="STUDY">Study</option>
-          <option value="PERSONAL">Personal</option>
-        </select>
+      <div className="flex flex-col sm:flex-row gap-2 mb-4 sm:mb-6">
+        <FilterSelect
+          value={filterPriority}
+          onChange={setFilterPriority}
+          placeholder="All Priorities"
+          options={[
+            { value: '',       label: 'All Priorities' },
+            { value: 'HIGH',   label: 'High' },
+            { value: 'MEDIUM', label: 'Medium' },
+            { value: 'LOW',    label: 'Low' },
+          ]}
+        />
+        <FilterSelect
+          value={filterCategory}
+          onChange={setFilterCategory}
+          placeholder="All Categories"
+          options={[
+            { value: '',         label: 'All Categories' },
+            { value: 'WORK',     label: 'Work' },
+            { value: 'STUDY',    label: 'Study' },
+            { value: 'PERSONAL', label: 'Personal' },
+          ]}
+        />
         {(filterPriority || filterCategory) && (
           <button onClick={() => { setFilterPriority(''); setFilterCategory(''); }}
-            aria-label="Clear filters" className="text-sm text-slate-400 hover:text-slate-600 flex items-center gap-1 px-2">
+            aria-label="Clear filters" className="text-sm text-slate-400 hover:text-slate-600 flex items-center gap-1 px-2 self-start sm:self-center">
             <X className="w-3 h-3" /> Clear
           </button>
         )}

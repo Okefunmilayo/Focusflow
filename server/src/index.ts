@@ -18,6 +18,7 @@ import digestRoutes    from './routes/digest.routes';
 import billingRoutes       from './routes/billing.routes';
 import passwordResetRoutes from './routes/passwordReset.routes';
 import { runWeeklyDigestForAllUsers } from './services/digest.service';
+import { prisma } from './config/prisma';
 
 const app = express();
 
@@ -25,7 +26,7 @@ const app = express();
 app.use(helmet());
 // Allow localhost on any port in dev (Vite picks 5173/5174/etc depending on what's free)
 const allowedOrigins = env.isDev()
-  ? /^http:\/\/localhost:\d+$/
+  ? /^http:\/\/(localhost|\d+\.\d+\.\d+\.\d+):\d+$/
   : env.clientUrl;
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json({ limit: '10mb' }));
@@ -61,15 +62,23 @@ app.use(notFound);
 app.use(errorHandler);
 
 // ── Start Server ──────────────────────────────────────────
-app.listen(env.port, () => {
-  console.log(`
+async function start() {
+  await prisma.$queryRaw`SELECT 1`;
+  app.listen(env.port, () => {
+    console.log(`
   ╔════════════════════════════════════════╗
   ║   FocusFlow API — Running             ║
   ║   Port    : ${env.port}                     ║
   ║   Env     : ${env.nodeEnv}              ║
   ║   AI      : Anthropic Claude API      ║
   ╚════════════════════════════════════════╝
-  `);
+    `);
+  });
+}
+
+start().catch((err) => {
+  console.error('[Startup] Failed to connect to database:', err.message);
+  process.exit(1);
 });
 
 export default app;

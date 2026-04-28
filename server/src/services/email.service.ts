@@ -1,28 +1,26 @@
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 import { env } from '../config/env';
 
 const isConfigured = () =>
-  Boolean(env.sendgridApiKey) && env.sendgridApiKey.startsWith('SG.');
+  Boolean(env.resendApiKey) && env.resendApiKey.startsWith('re_');
 
-if (isConfigured()) {
-  sgMail.setApiKey(env.sendgridApiKey);
-}
+const resend = isConfigured() ? new Resend(env.resendApiKey) : null;
 
-const FROM = { email: env.emailFrom, name: 'FocusFlow' };
+const FROM = `FocusFlow <${env.emailFrom}>`;
 
 // ── Password Reset ────────────────────────────────────────────
 export const sendPasswordResetEmail = async (
   to: string,
   resetUrl: string
 ): Promise<void> => {
-  if (!isConfigured()) {
-    console.log(`[Email] SendGrid not configured. Reset link for ${to}: ${resetUrl}`);
+  if (!resend) {
+    console.log(`[Email] Resend not configured. Reset link for ${to}: ${resetUrl}`);
     return;
   }
 
-  await sgMail.send({
-    to,
+  const { data, error } = await resend.emails.send({
     from: FROM,
+    to,
     subject: 'Reset your FocusFlow password',
     html: `
       <!DOCTYPE html>
@@ -32,16 +30,11 @@ export const sendPasswordResetEmail = async (
           <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8fafc; padding: 40px 20px;">
             <tr><td align="center">
               <table width="520" cellpadding="0" cellspacing="0" style="background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <!-- Header -->
                 <tr>
                   <td style="background: #2563eb; padding: 32px; text-align: center;">
-                    <div style="display: inline-flex; align-items: center; gap: 8px;">
-                      <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block; line-height: 32px; text-align: center; font-size: 18px;">⚡</div>
-                      <span style="color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: -0.5px;">FocusFlow</span>
-                    </div>
+                    <span style="color: #ffffff; font-size: 20px; font-weight: 700;">⚡ FocusFlow</span>
                   </td>
                 </tr>
-                <!-- Body -->
                 <tr>
                   <td style="padding: 40px 32px;">
                     <h1 style="color: #0f172a; font-size: 22px; font-weight: 700; margin: 0 0 12px;">Reset your password</h1>
@@ -60,7 +53,6 @@ export const sendPasswordResetEmail = async (
                     </p>
                   </td>
                 </tr>
-                <!-- Footer -->
                 <tr>
                   <td style="background: #f8fafc; padding: 20px 32px; border-top: 1px solid #e2e8f0;">
                     <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
@@ -77,18 +69,27 @@ export const sendPasswordResetEmail = async (
     `,
     text: `Reset your FocusFlow password\n\nClick the link below (expires in 1 hour):\n${resetUrl}\n\nIf you didn't request this, ignore this email.`,
   });
+  if (error) console.error('[Email] Resend error (reset):', error);
+  else console.log('[Email] Reset email sent to', to, '— id:', data?.id);
 };
 
 // ── Welcome Email ─────────────────────────────────────────────
 export const sendWelcomeEmail = async (to: string, name: string): Promise<void> => {
-  if (!isConfigured()) {
-    console.log(`[Email] SendGrid not configured. Skipping welcome email for ${to}`);
+  if (!resend) {
+    console.log(`[Email] Resend not configured. Skipping welcome email for ${to}`);
     return;
   }
 
-  await sgMail.send({
-    to,
+  const features: [string, string, string][] = [
+    ['⚡', 'AI Goal Breakdown', 'Turn any big goal into a daily action plan'],
+    ['🍅', 'Pomodoro Timer', 'Stay focused with timed work sessions'],
+    ['📄', 'Document Analyser', 'Upload PDFs and get AI summaries + flashcards'],
+    ['📊', 'Weekly AI Digest', 'Get personalised productivity insights every Sunday'],
+  ];
+
+  await resend.emails.send({
     from: FROM,
+    to,
     subject: 'Welcome to FocusFlow!',
     html: `
       <!DOCTYPE html>
@@ -105,17 +106,12 @@ export const sendWelcomeEmail = async (to: string, name: string): Promise<void> 
                 </tr>
                 <tr>
                   <td style="padding: 40px 32px;">
-                    <h1 style="color: #0f172a; font-size: 22px; font-weight: 700; margin: 0 0 12px;">Welcome, ${name}! 🎉</h1>
+                    <h1 style="color: #0f172a; font-size: 22px; font-weight: 700; margin: 0 0 12px;">Welcome, ${name}!</h1>
                     <p style="color: #475569; font-size: 15px; line-height: 1.6; margin: 0 0 20px;">
                       You're all set to supercharge your productivity with AI. Here's what you can do with FocusFlow:
                     </p>
                     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 28px;">
-                      ${[
-                        ['⚡', 'AI Goal Breakdown', 'Turn any big goal into a daily action plan'],
-                        ['🍅', 'Pomodoro Timer', 'Stay focused with timed work sessions'],
-                        ['📄', 'Document Analyser', 'Upload PDFs and get AI summaries + flashcards'],
-                        ['📊', 'Weekly AI Digest', 'Get personalised productivity insights every Sunday'],
-                      ].map(([icon, title, desc]) => `
+                      ${features.map(([icon, title, desc]) => `
                         <tr>
                           <td style="padding: 10px 0; border-bottom: 1px solid #f1f5f9; vertical-align: top; width: 36px; font-size: 20px;">${icon}</td>
                           <td style="padding: 10px 0 10px 12px; border-bottom: 1px solid #f1f5f9;">
@@ -126,7 +122,7 @@ export const sendWelcomeEmail = async (to: string, name: string): Promise<void> 
                       `).join('')}
                     </table>
                     <div style="text-align: center;">
-                      <a href="http://localhost:5173/dashboard" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 600; padding: 14px 32px; border-radius: 10px;">
+                      <a href="${env.clientUrl}/dashboard" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 600; padding: 14px 32px; border-radius: 10px;">
                         Go to Dashboard
                       </a>
                     </div>
@@ -145,6 +141,6 @@ export const sendWelcomeEmail = async (to: string, name: string): Promise<void> 
         </body>
       </html>
     `,
-    text: `Welcome to FocusFlow, ${name}!\n\nYou're all set. Visit your dashboard to get started:\nhttp://localhost:5173/dashboard`,
+    text: `Welcome to FocusFlow, ${name}!\n\nYou're all set. Visit your dashboard:\n${env.clientUrl}/dashboard`,
   });
 };

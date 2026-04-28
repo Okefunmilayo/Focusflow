@@ -74,7 +74,7 @@ export default function BillingPage() {
                 <Crown className="w-4 h-4 text-yellow-300" />
                 <h2 className="font-bold text-lg">Pro</h2>
               </div>
-              <p className="text-3xl font-bold mt-1">$9<span className="text-sm font-normal opacity-70">/mo</span></p>
+              <p className="text-3xl font-bold mt-1">$2<span className="text-sm font-normal opacity-70">/mo</span></p>
             </div>
             {isPro && (
               <span className="text-xs font-semibold bg-white/20 px-2 py-1 rounded-full">Active</span>

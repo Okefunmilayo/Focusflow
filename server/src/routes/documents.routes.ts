@@ -5,8 +5,10 @@ import fs from 'fs';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const pdfParse = require('pdf-parse') as (buf: Buffer) => Promise<{ text: string }>;
 import { protect, AuthRequest } from '../middleware/auth.middleware';
+import { aiLimiter } from '../middleware/rateLimit.middleware';
 import { prisma } from '../config/prisma';
 import { analyseDocument } from '../services/ai/claude.service';
+import { env } from '../config/env';
 
 const router = Router();
 router.use(protect);
@@ -37,9 +39,11 @@ router.get('/', async (req, res) => {
       where:   { userId },
       include: { flashcards: true },
       orderBy: { createdAt: 'desc' },
+      take:    50,
     });
     res.json({ documents: docs });
-  } catch {
+  } catch (err) {
+    console.error('[Documents] fetch error:', err);
     res.status(500).json({ message: 'Failed to fetch documents' });
   }
 });
@@ -47,6 +51,7 @@ router.get('/', async (req, res) => {
 // ── POST /documents/upload ────────────────────────────────────
 router.post(
   '/upload',
+  aiLimiter,
   (req: Request, res: Response, next: NextFunction) => {
     upload.single('file')(req, res, (err) => {
       if (err instanceof multer.MulterError) {
@@ -87,6 +92,7 @@ router.post(
         if (parsed.text?.trim()) fileContent = parsed.text.trim();
       } catch (pdfErr) {
         console.warn('[Documents] pdf-parse failed, using filename stub:', pdfErr);
+        // File stays on disk — analysis continues with stub content
       }
 
       const analysis = await analyseDocument(fileContent);
@@ -114,7 +120,10 @@ router.post(
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       console.error('[Documents] upload error:', msg);
-      res.status(500).json({ message: 'Analysis failed. Please try again.', detail: msg });
+      res.status(500).json({
+        message: 'Analysis failed. Please try again.',
+        ...(env.isDev() && { detail: msg }),
+      });
     }
   }
 );
@@ -128,12 +137,14 @@ router.delete('/:id', async (req, res) => {
     });
     if (!doc) { res.status(404).json({ message: 'Not found' }); return; }
 
-    const filePath = path.join(process.cwd(), doc.fileUrl);
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    const uploadsDir = path.resolve(process.cwd(), 'uploads');
+    const filePath   = path.resolve(uploadsDir, path.basename(doc.fileUrl));
+    if (filePath.startsWith(uploadsDir) && fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
     await prisma.document.delete({ where: { id: doc.id } });
     res.json({ message: 'Deleted' });
-  } catch {
+  } catch (err) {
+    console.error('[Documents] delete error:', err);
     res.status(500).json({ message: 'Delete failed' });
   }
 });

@@ -14,6 +14,9 @@ router.post('/goal-breakdown', aiLimiter, async (req: AuthRequest, res: Response
     const { goal, deadline, context, autoCreateTasks } = req.body;
 
     if (!goal) { res.status(400).json({ message: 'Goal is required' }); return; }
+    if (typeof goal !== 'string' || goal.length > 2000) {
+      res.status(400).json({ message: 'Goal must be under 2000 characters' }); return;
+    }
 
     const steps = await breakdownGoal(goal, deadline, context);
 
@@ -33,7 +36,8 @@ router.post('/goal-breakdown', aiLimiter, async (req: AuthRequest, res: Response
     }
 
     res.json({ success: true, steps });
-  } catch {
+  } catch (err) {
+    console.error('[AI] goal breakdown error:', err);
     res.status(500).json({ message: 'AI goal breakdown failed' });
   }
 });
@@ -43,10 +47,14 @@ router.post('/suggest-subtasks', async (req: AuthRequest, res: Response): Promis
   try {
     const { taskTitle } = req.body;
     if (!taskTitle) { res.status(400).json({ message: 'taskTitle is required' }); return; }
+    if (typeof taskTitle !== 'string' || taskTitle.length > 500) {
+      res.status(400).json({ message: 'taskTitle must be under 500 characters' }); return;
+    }
 
     const subtasks = await suggestTaskBreakdown(taskTitle);
     res.json({ success: true, subtasks });
-  } catch {
+  } catch (err) {
+    console.error('[AI] subtask suggestion error:', err);
     res.status(500).json({ message: 'Subtask suggestion failed' });
   }
 });

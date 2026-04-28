@@ -25,8 +25,8 @@ export const env = {
   stripeWebhookSecret:process.env.STRIPE_WEBHOOK_SECRET ?? '',
   stripePriceIdPro:   process.env.STRIPE_PRICE_ID_PRO ?? '',
 
-  sendgridApiKey:     process.env.SENDGRID_API_KEY ?? '',
-  emailFrom:          process.env.EMAIL_FROM ?? 'noreply@focusflow.app',
+  resendApiKey:       process.env.RESEND_API_KEY ?? '',
+  emailFrom:          process.env.EMAIL_FROM ?? 'onboarding@resend.dev',
 
   cloudinaryCloudName:process.env.CLOUDINARY_CLOUD_NAME ?? '',
   cloudinaryApiKey:   process.env.CLOUDINARY_API_KEY ?? '',
